@@ -1,5 +1,5 @@
 module.exports = function(passport, user) {
-   const EveOnlineStrategy = require('passport-eveonline-sso').Strategy;
+   const EveOnlineSsoStrategy = require('passport-eveonline-sso').Strategy;
 
    //* Serialize user
    passport.serializeUser(function(user, done) {
@@ -13,8 +13,7 @@ module.exports = function(passport, user) {
 
    //* EveOnline Login
    passport.use(
-      'eveonline',
-      new EveOnlineStrategy(
+      new EveOnlineSsoStrategy(
          {
             clientID: process.env.EVEONLINE_CLIENT_ID,
             clientSecret: process.env.EVEONLINE_SECRET_KEY,
@@ -25,8 +24,8 @@ module.exports = function(passport, user) {
          function(accessToken, refreshToken, profile, done) {
             process.nextTick(function() {
                // You could save the tokens to a database and/or call EVE Swaggger Interface (ESI) resources.
-               localStorage.setItem('accessToken', accessToken);
-               localStorage.setItem('refreshToken', refreshToken);
+               // localStorage.setItem('accessToken', accessToken);
+               // localStorage.setItem('refreshToken', refreshToken);
 
                console.log('=== New Login ===');
                console.log('accessToken:', accessToken);
