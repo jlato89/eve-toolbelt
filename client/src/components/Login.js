@@ -1,27 +1,21 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-export class Login extends Component {
+ class Login extends Component {
 
-   constructor() {
-      super();
-      this.state = {
-         pilot: '',
-         errors: {}
-      }
-
+   componentDidMount() {
       axios
-         .get('/api/login')
+         .get('auth/eveonline')
          .then(res => {
             console.log(res.data);
          })
-         .catch(err => console.log('Login.js AXIOS: ',err));
+         .catch(err => console.log('Login.js AXIOS: ', err));
    }
 
    render() {
       return (
          <div>
-            <h1>Login Page</h1>\
+            <h1>Login Page</h1>
          </div>
       )
    }
