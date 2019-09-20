@@ -2,14 +2,15 @@ module.exports = function(app, passport) {
    
    // Login
    app.get('/api/login', function(req, res) {
-      res.redirect('/api/auth/eveonline');
+      console.log('made it to /api/login');
+      res.redirect('/auth/eveonline');
    });
 
    //  Login proccess
-   app.get('/api/auth/eveonline', 
+   app.get('/auth/eveonline', 
       passport.authenticate('eveonline'), 
       function(req, res) {
-         console.log('Made it to /api/auth/eveonline');
+         console.log('Made it to /auth/eveonline');
          res.status(200).json({
             success: true
          });
@@ -18,10 +19,10 @@ module.exports = function(app, passport) {
 
    // Callback
    app.get(
-      '/api/auth/eveonline/callback',
+      '/auth/eveonline/callback',
       passport.authenticate('eveonline', {
          successRedirect: '/',
-         failureRedirect: '/api/login'
+         failureRedirect: '/error'
       }),
       function(req, res) {
          var code = req.query.code;
