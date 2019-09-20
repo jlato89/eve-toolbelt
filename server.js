@@ -15,15 +15,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 //Setup passport
-app.use(
-   session({
-      secret: 'process.env.PASSPORT_SECRET_KEY',
-      resave: true,
-      saveUninitialized: true
-   })
-);
+// app.use(
+//    session({
+//       secret: 'process.env.PASSPORT_SECRET_KEY',
+//       resave: true,
+//       saveUninitialized: true
+//    })
+// );
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 
 //Load passport strategies
 require('./config/passport.js')(passport);
