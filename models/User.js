@@ -5,11 +5,27 @@ module.exports = function(sequelize, Sequelize) {
          primaryKey: true,
          defaultValue: Sequelize.UUIDV4
       },
-      pilot: {
+      characterID: {
+         type: Sequelize.INTEGER,
+         allowNull: false
+      },
+      characterName: {
          type: Sequelize.STRING,
          allowNull: false
       },
-      perms: {
+      expiresOn: {
+         type: Sequelize.DATE,
+         allowNull: false
+      },
+      scopes: {
+         type: Sequelize.STRING,
+         allowNull: false
+      },
+      tokenType: {
+         type: Sequelize.STRING,
+         allowNull: false
+      },
+      characterOwnerHash: {
          type: Sequelize.STRING,
          allowNull: false
       }
