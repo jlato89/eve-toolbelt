@@ -1,3 +1,4 @@
+const fs = require('fs')
 module.exports = function(app, passport) {
    
    // Login
@@ -21,13 +22,22 @@ module.exports = function(app, passport) {
          // failureRedirect: '/error'
       }),
       function(req, res) {
-      //    var code = req.query.code;
-      //    var state = req.query.state;
-      //    console.log('Made it to callback');
-      //    console.log(code);
-      //    console.log(state);
-      //    // Place something here
-      res.redirect('/dashboard')
+         const code = req.query.code;
+         const state = req.query.state;
+         console.log('~~~ Made it to callback ~~~');
+         console.log('Auth Code:\n',code);
+         console.log('state:\n',state);
+         console.log('orginalState:\n', process.env.EVEONLINE_STATE);
+
+
+         // if (state === process.env.EVEONLINE_STATE) {
+         //    console.log('States Match!');
+         //    // insert DB Data here or in passport.js
+         // } else {
+         //    console.log('Staes DO NOT Match!!! Rejecting info');
+         //    // Reject info and re-request
+         // }
+         res.redirect('http://localhost:3000/dashboard');
       }
    );
 
