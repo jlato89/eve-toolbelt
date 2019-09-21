@@ -1,3 +1,5 @@
+const scopes =require('./scopes.js');
+
 module.exports = function(passport, user) {
    const EveOnlineSsoStrategy = require('passport-eveonline-sso').Strategy;
 
@@ -18,8 +20,8 @@ module.exports = function(passport, user) {
             clientID: process.env.EVEONLINE_CLIENT_ID,
             clientSecret: process.env.EVEONLINE_SECRET_KEY,
             callbackURL: process.env.EVEONLINE_CALLBACK_URL,
-            scope: process.env.EVEONLINE_SCOPES
-            // state: process.env.EVEONLINE_STATE
+            scope: scopes,
+            state: process.env.EVEONLINE_STATE
          },
          function(accessToken, refreshToken, profile, done) {
             process.nextTick(function() {
