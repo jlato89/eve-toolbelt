@@ -32,6 +32,7 @@ module.exports = function(passport, user) {
                console.log('=== New Login ===');
                console.log('accessToken:', accessToken);
                console.log('refreshToken:', refreshToken);
+               console.log('=== End of Login ===');
                // console.log('profile:', profile);
 
                const tokens = {
