@@ -10,7 +10,7 @@ module.exports = function(app, passport) {
          // const accessToken = req.authInfo.accessToken;
          // const refreshToken = req.authInfo.refreshToken;
          // console.log('passport user: \n',req.user._json);
-         // console.log('passport tokens: \n',req.authInfo);
+         console.log('passport tokens: \n',req.authInfo); //! not able to pass from passport
          res.json({
             // name: 'Josh',
             // location: 'Nashville, Tn',
