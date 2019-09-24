@@ -4,18 +4,18 @@ export class Dashboard extends Component {
    constructor() {
       super();
       this.state = {
-         user: [],
-         tokens: []
+         user: {},
+         tokens: {}
       }
    }
    componentDidMount() {
-      fetch('/user', {mode: 'cors'})
+      fetch('/api/user', {mode: 'cors'})
          .then(res => {
-            console.log(res);
+            console.log('DASHBOARD: ',res);
             return res.json();
          })
          .then(user => {
-            console.log(user);
+            console.log('DASHBOARD: ',user);
             this.setState({ user });
          });
    }
@@ -24,7 +24,8 @@ export class Dashboard extends Component {
       return (
          <>
             <h1>Dashboard Page</h1>
-            <h2>Welcome {this.state.user.CharacterName}!</h2>
+            <h2>Welcome {this.state.user.name}!</h2>
+            <h4>From {this.state.user.location}</h4>
          </>
       );
    }
