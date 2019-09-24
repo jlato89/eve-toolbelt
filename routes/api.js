@@ -1,12 +1,5 @@
-const fs = require('fs')
 module.exports = function(app, passport) {
    
-   // Login
-   // app.get('/api/login', function(req, res) {
-   //    console.log('made it to /api/login');
-   //    res.redirect('http:google.com');
-   // });
-
 
    //  Login proccess
    app.get('/auth/eveonline', 
@@ -17,27 +10,28 @@ module.exports = function(app, passport) {
    app.get(
       '/auth/eveonline/callback',
       passport.authenticate('eveonline-sso', {
-         session: false
-         // successRedirect: '/dashboard',
-         // failureRedirect: '/error'
+         session: true,
+         failureRedirect: '/error'
       }),
       function(req, res) {
-         const code = req.query.code;
-         const state = req.query.state;
+         const accessToken = req.authInfo.accessToken;
+         const refreshToken = req.authInfo.refreshToken;
+         const user = req.user._json;
+
+         const profile = {
+            accessToken: accessToken,
+            refreshToken:refreshToken,
+            user: user
+         }
+
          console.log('~~~ Made it to callback ~~~');
-         console.log('Auth Code:\n',code);
-         console.log('state:\n',state);
-         console.log('orginalState:\n', process.env.EVEONLINE_STATE);
+         // console.log('accessToken: \n',accessToken);
+         // console.log('refreshToken: \n',refreshToken);
+         // console.log('User: \n', user);
+         console.log('profile: \n', profile);
 
 
-         // if (state === process.env.EVEONLINE_STATE) {
-         //    console.log('States Match!');
-         //    // insert DB Data here or in passport.js
-         // } else {
-         //    console.log('Staes DO NOT Match!!! Rejecting info');
-         //    // Reject info and re-request
-         // }
-         res.redirect('http://localhost:3000/dashboard');
+         res.redirect('http://localhost:3000/dashboard', profile);
       }
    );
 
