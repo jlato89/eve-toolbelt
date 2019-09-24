@@ -15,17 +15,21 @@ export class Dashboard extends Component {
             return res.json();
          })
          .then(user => {
-            console.log('DASHBOARD: ',user);
-            this.setState({ user });
-         });
+            console.log('DASHBOARD User: ',user);
+            this.setState(user);
+         })
+         .catch(err => {
+            console.log('No info to display');
+            alert('Please Login First!')
+            window.location.href = '/';
+         })
    }
 
    render() { 
       return (
          <>
             <h1>Dashboard Page</h1>
-            <h2>Welcome {this.state.user.name}!</h2>
-            <h4>From {this.state.user.location}</h4>
+            <h2>Welcome {this.state.user.CharacterName}!</h2>
          </>
       );
    }
