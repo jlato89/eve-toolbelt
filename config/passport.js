@@ -26,15 +26,20 @@ module.exports = function(passport, user) {
          function(accessToken, refreshToken, profile, done) {
             process.nextTick(function() {
                // You could save the tokens to a database and/or call EVE Swaggger Interface (ESI) resources.
-               // localStorage.setItem('accessToken', accessToken);
+               // localStorage.setItem('accessToken', accessToken); //! Doesnt work on server
                // localStorage.setItem('refreshToken', refreshToken);
 
                console.log('=== New Login ===');
                console.log('accessToken:', accessToken);
                console.log('refreshToken:', refreshToken);
-               console.log('profile:', profile);
+               // console.log('profile:', profile);
 
-               return done(null, profile);
+               const tokens = {
+                  accessToken,
+                  refreshToken
+               }
+
+               return done(null, profile, tokens);
             });
          }
       )
