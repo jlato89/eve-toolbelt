@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
- class Login extends Component {
-
+class Login extends Component {
    componentDidMount() {
+      axios
+         .get('/auth/eveonline')
+         .then(res => {
+            console.log(res.data);
+         })
+         .catch(err => console.log('Login.js AXIOS: ', err));
    }
 
    render() {
@@ -11,8 +16,8 @@ import axios from 'axios';
          <div>
             <h1>Login Page</h1>
          </div>
-      )
+      );
    }
 }
 
-export default Login
+export default Login;
