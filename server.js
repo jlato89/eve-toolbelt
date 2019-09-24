@@ -6,9 +6,13 @@ const bodyParser = require('body-parser');
 require('moment');
 require('dotenv').config();
 
+
 // Assign port and Start Express Server
 const PORT = process.env.PORT || 8080;
 const app = express();
+
+// const proxy = require('express-http-proxy');
+// app.use('/auth/*', proxy('http://localhost:8080'));
 
 //Setup BodyParser
 app.use(bodyParser.urlencoded({ extended: true }));
