@@ -1,5 +1,13 @@
 module.exports = function(app, passport) {
    
+   app.get('/user', (req, res) => {
+      res.json({
+         user: {
+            name: 'Josh',
+            location: 'Nashville, Tn'
+         }
+      })
+   })
 
    //  Login proccess
    app.get('/auth/eveonline', 
@@ -11,27 +19,29 @@ module.exports = function(app, passport) {
       '/auth/eveonline/callback',
       passport.authenticate('eveonline-sso', {
          session: true,
-         failureRedirect: '/error'
+         // successRedirect: 'http://localhost:3000/dashboard',
+         failureRedirect: 'http://localhost:3000/error'
       }),
       function(req, res) {
          const accessToken = req.authInfo.accessToken;
          const refreshToken = req.authInfo.refreshToken;
          const user = req.user._json;
 
-         const profile = {
-            accessToken: accessToken,
-            refreshToken:refreshToken,
-            user: user
-         }
+         const tokens = {
+            accessToken,
+            refreshToken
+         };
 
          console.log('~~~ Made it to callback ~~~');
          // console.log('accessToken: \n',accessToken);
          // console.log('refreshToken: \n',refreshToken);
          // console.log('User: \n', user);
-         console.log('profile: \n', profile);
+         console.log('profile: \n', user);
 
-
-         res.redirect('http://localhost:3000/dashboard', profile);
+         res.json({
+            user
+         }); //! trying to pass result to react
+         // res.redirect('http://localhost:3000/dashboard');
       }
    );
 
