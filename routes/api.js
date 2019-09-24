@@ -1,12 +1,24 @@
 module.exports = function(app, passport) {
    
-   app.get('/user', (req, res) => {
-      res.json({
-         user: {
-            name: 'Josh',
-            location: 'Nashville, Tn'
-         }
-      })
+   app.get('/api/user', (req, res) => {
+      if (!req.user) {
+         console.log('User is NOT logged in!');
+         res.redirect('/')
+      } else {
+         console.log('User is logged in');
+         const user = req.user._json;
+         // const accessToken = req.authInfo.accessToken;
+         // const refreshToken = req.authInfo.refreshToken;
+         // console.log('passport user: \n',req.user._json);
+         // console.log('passport tokens: \n',req.authInfo);
+         res.json({
+            // name: 'Josh',
+            // location: 'Nashville, Tn',
+            user
+            // accessToken,
+            // refreshToken
+         })
+      }
    })
 
    //  Login proccess
@@ -19,7 +31,7 @@ module.exports = function(app, passport) {
       '/auth/eveonline/callback',
       passport.authenticate('eveonline-sso', {
          session: true,
-         // successRedirect: 'http://localhost:3000/dashboard',
+         successRedirect: 'http://localhost:3000/dashboard',
          failureRedirect: 'http://localhost:3000/error'
       }),
       function(req, res) {
@@ -35,12 +47,8 @@ module.exports = function(app, passport) {
          console.log('~~~ Made it to callback ~~~');
          // console.log('accessToken: \n',accessToken);
          // console.log('refreshToken: \n',refreshToken);
-         // console.log('User: \n', user);
-         console.log('profile: \n', user);
+         // console.log('profile: \n', user);
 
-         res.json({
-            user
-         }); //! trying to pass result to react
          // res.redirect('http://localhost:3000/dashboard');
       }
    );
@@ -54,7 +62,7 @@ module.exports = function(app, passport) {
 
    //* FUNCTIONS
    function isLoggedIn(req, res, next) {
-      if (req.isAuthenticated()) {
+      if (req.user()) {
          return next();
       }
       res.redirect('/');
