@@ -59,12 +59,4 @@ module.exports = function(app, passport) {
          res.redirect('/');
       });
    });
-
-   //* FUNCTIONS
-   function isLoggedIn(req, res, next) {
-      if (req.user()) {
-         return next();
-      }
-      res.redirect('/');
-   }
 };
