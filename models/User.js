@@ -13,6 +13,11 @@ module.exports = function(sequelize, Sequelize) {
          type: Sequelize.STRING,
          allowNull: false
       },
+      characterOwnerHash: {
+         type: Sequelize.STRING,
+         allowNull: false
+      },
+
       expiresOn: {
          type: Sequelize.DATE,
          allowNull: false
@@ -25,7 +30,11 @@ module.exports = function(sequelize, Sequelize) {
          type: Sequelize.STRING,
          allowNull: false
       },
-      characterOwnerHash: {
+      accessToken: {
+         type: Sequelize.STRING,
+         allowNull: false
+      },
+      refreshToken: {
          type: Sequelize.STRING,
          allowNull: false
       }
