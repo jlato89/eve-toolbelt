@@ -7,7 +7,7 @@ module.exports = function(app, passport) {
       } else {
          // console.log('User is logged in');
          const user = req.user._json;
-         res.json(user)
+         res.json({user})
       }
    })
 
