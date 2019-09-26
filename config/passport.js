@@ -70,7 +70,7 @@ module.exports = function(passport, db) {
                         accessToken,
                         refreshToken
                      }
-                     console.log('PASSPORT USER: \n',newUser);
+                     // console.log('PASSPORT USER: \n',newUser);
                      db.user.create(newUser)
                      .then((newUser, created) => {
                         if (!newUser) {
@@ -81,9 +81,7 @@ module.exports = function(passport, db) {
                            // return done(null, newToken);
                         }
                      })
-                     .catch((err) => {
-                        console.log('PASSPORT ERROR: \n',err);
-                     });
+                     .catch((err) => console.log('PASSPORT ERROR: \n',err));
                   }
                });
                return done(null, profile);
