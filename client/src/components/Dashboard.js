@@ -5,7 +5,6 @@ export class Dashboard extends Component {
       super();
       this.state = {
          user: {},
-         tokens: {}
       }
    }
    componentDidMount() {
