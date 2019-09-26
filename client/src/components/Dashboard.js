@@ -5,6 +5,7 @@ export class Dashboard extends Component {
       super();
       this.state = {
          user: {},
+         location: {}
       }
    }
    componentDidMount() {
@@ -21,14 +22,14 @@ export class Dashboard extends Component {
             console.log('No info to display');
             alert('Please Login First!')
             window.location.href = '/';
-         })
+         });
    }
 
    render() { 
       return (
          <>
             <h1>Dashboard Page</h1>
-            <h2>Welcome {this.state.user.CharacterName}!</h2>
+            <h2>Welcome {this.state.user.characterName}!</h2>
          </>
       );
    }
