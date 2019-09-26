@@ -40,7 +40,7 @@ app.use(express.static('public'));
 
 
 // Define Routes
-require('./routes/api')(app, passport);
+require('./routes/api')(app, passport, db);
 
 // Send every other request to the React app(FOR BUILT APP)
 // app.get('*', (req, res) => {
