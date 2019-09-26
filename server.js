@@ -30,14 +30,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //Load passport strategies
-require('./config/passport.js')(passport);
+const db = require('./models');
+require('./config/passport.js')(passport, db);
 
 // Setup Misc
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
 
-const db = require('./models');
 
 // Define Routes
 require('./routes/api')(app, passport);
@@ -47,26 +47,20 @@ require('./routes/api')(app, passport);
 //    res.sendFile(path.join(__dirname, './client/build/index.html'));
 // });
 
-app.listen(PORT, function() {
-   console.log(
-      'Listening on port %s. Visit http://localhost:%s/ in your browser.',
-      PORT,
-      PORT
-   );
-});
-
-// // Listen on a specific host via the HOST environment variable
-// var host = process.env.HOST || '0.0.0.0';
-// // Listen on a specific port via the PORT environment variable
-// var port = process.env.PORT || 8080;
-
-// var cors_proxy = require('cors-anywhere');
-// cors_proxy.createServer({
-//     originWhitelist: [], // Allow all origins
-//     requireHeader: ['origin', 'x-requested-with'],
-//     removeHeaders: ['cookie', 'cookie2']
-// }).listen(port, host, function() {
-//     console.log('Running CORS Anywhere on ' + host + ':' + port);
+// app.listen(PORT, function() {
+//    console.log(
+//       'Listening on port %s. Visit http://localhost:%s/ in your browser.',
+//       PORT,
+//       PORT
+//    );
 // });
 
-// module.exports = app; //! prob don't need
+db.sequelize.sync({ force: false }).then(function() {
+   app.listen(PORT, function() {
+      console.log(
+         '==> 🌎  Listening on port %s. Visit http://localhost:%s/ in your browser.',
+         PORT,
+         PORT
+      );
+   });
+});
