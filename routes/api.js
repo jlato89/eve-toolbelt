@@ -1,4 +1,4 @@
-module.exports = function(app, passport) {
+module.exports = function(app, passport, db) {
    
    app.get('/api/user', (req, res) => {
       if (!req.user) {
@@ -6,10 +6,19 @@ module.exports = function(app, passport) {
          res.redirect('/')
       } else {
          // console.log('User is logged in');
-         const user = req.user._json;
-         res.json({user})
+         const currentUser = req.user.CharacterID;
+         db.user.findOne({
+            where: {
+               characterID: currentUser
+            }
+         })
+         .then((data) => {
+            const user = data.dataValues
+            console.log(user);
+            res.json({user})
+         });
       }
-   })
+   });
 
    //  Login proccess
    app.get('/auth/eveonline', 
