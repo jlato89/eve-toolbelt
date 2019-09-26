@@ -31,25 +31,16 @@ module.exports = function(app, passport) {
       '/auth/eveonline/callback',
       passport.authenticate('eveonline-sso', {
          session: true,
-         successRedirect: 'http://localhost:3000/dashboard',
+         // successRedirect: 'http://localhost:3000/dashboard',
          failureRedirect: 'http://localhost:3000/error'
       }),
       function(req, res) {
-         const accessToken = req.authInfo.accessToken;
-         const refreshToken = req.authInfo.refreshToken;
-         const user = req.user._json;
-
-         const tokens = {
-            accessToken,
-            refreshToken
-         };
-
          console.log('~~~ Made it to callback ~~~');
-         // console.log('accessToken: \n',accessToken);
-         // console.log('refreshToken: \n',refreshToken);
-         // console.log('profile: \n', user);
+         // console.log('accessToken: \n',req.authInfo.accessToken);
+         // console.log('refreshToken: \n',req.authInfo.refreshToken);
+         // console.log('profile: \n', req.user._json);
 
-         // res.redirect('http://localhost:3000/dashboard');
+         res.redirect('http://localhost:3000/dashboard');
       }
    );
 
