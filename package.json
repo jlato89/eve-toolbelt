@@ -27,6 +27,7 @@
     "mysql2": "^1.7.0",
     "passport": "^0.4.0",
     "passport-eveonline-sso": "github:eve-scout/passport-eveonline-sso",
+    "request": "^2.88.0",
     "sequelize": "^5.19.0"
   }
 }
