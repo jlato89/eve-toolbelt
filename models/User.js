@@ -31,7 +31,7 @@ module.exports = function(sequelize, Sequelize) {
          allowNull: false
       },
       accessToken: {
-         type: Sequelize.STRING,
+         type: Sequelize.TEXT,
          allowNull: false
       },
       refreshToken: {
