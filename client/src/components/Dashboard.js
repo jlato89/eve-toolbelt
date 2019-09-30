@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Axios from 'axios';
+import { access } from 'fs';
 
 export class Dashboard extends Component {
    constructor() {
@@ -16,7 +17,7 @@ export class Dashboard extends Component {
       //* Check if user is logged in
       const characterID = localStorage.characterID;
       const characterName = localStorage.characterName;
-      const accessToken = localStorage.accessToken;
+      let accessToken = localStorage.accessToken;
 
       if (!characterName || !characterID || !accessToken) {
          console.log('User Not Logged In. Grabbing data');
@@ -55,34 +56,66 @@ export class Dashboard extends Component {
          characterSkillQueue: `/characters/${characterID}/skillqueue/`,
       };
       const rawUrl = 'https://esi.evetech.net/latest';
-      console.log('accessToken: \n',this.state.accessToken);
 
-      Axios.get(`https://esi.evetech.net/latest/characters/95271542/wallet/`, {
-         Headers: {
-            Authorization: 'Bearer ' + this.state.accessToken
-         }
-      })
+      // //* Api call for data
+      // Axios.get(`https://esi.evetech.net/latest/characters/95271542/wallet/`, {
+      //    headers: {
+      //       'Authorization': 'Bearer ' + accessToken
+      //    }
+      // })
+      //    .then(res => {
+      //       console.log('Returned API Data: ');
+      //       console.log('res: ', res);
+      //    })
+      //    .catch(err => {
+      //       const errRes = err.response.data.error
+      //       console.log(err.response);
+      //       // If error is caused by "Token is expired" then have server refresh access token and send back new token.
+      //       if (errRes === 'token is expired'){
+      //          console.log('Token Expired, Sending token refresh call');
+      //          Axios.get(`/api/token/${characterID}`)
+      //          .then(res => {
+      //             localStorage.setItem('accessToken', res.data);
+      //             // this.setState({accessToken: res.data})
+      //          })
+      //          .catch(err => {
+      //             console.log(err);
+      //          })
+      //       }
+      //    });
+
+      for (const [key, value] of Object.entries(requests)) {
+         const queryUrl = rawUrl+value;
+         // console.log(key);
+         // console.log(queryUrl);
+
+               //* Api call for data
+         Axios.get(queryUrl, {
+            headers: {
+               'Authorization': 'Bearer ' + accessToken
+            }
+         })
          .then(res => {
-            console.log('res: ', res);
+            console.log(key,':\n', res);
          })
          .catch(err => {
-            console.log('err: ', err);
+            const errRes = err.response.data.error
+            console.log(err.response);
+            // If error is caused by "Token is expired" then have server refresh access token and send back new token.
+            if (errRes === 'token is expired'){
+               console.log('Token Expired, Sending token refresh call');
+               Axios.get(`/api/token/${characterID}`)
+               .then(res => {
+                  localStorage.setItem('accessToken', res.data);
+                  // this.setState({accessToken: res.data})
+               })
+               .catch(err => {
+                  console.log(err);
+               })
+            }
          });
 
-      // for (const [key, value] of Object.entries(requests)) {
-      //    const queryUrl = rawUrl+value;
-      //    // console.log(key);
-      //    // console.log(queryUrl);
-
-      //    Axios.get(queryUrl + value, {
-      //       headers: {
-      //          Authorization: this.state.accessToken
-      //       }
-      //    })
-      //    .then(res => {
-      //       console.log(key,' : ',res);
-      //    })
-      // }
+      }
    }
 
    render() { 
