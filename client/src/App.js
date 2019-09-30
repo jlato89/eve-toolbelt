@@ -3,35 +3,48 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import Dashboard from './components/Dashboard';
 import NoMatch from './components/NoMatch';
-// import Login from './components/Login';
+import Login from './components/Login';
 
 class App extends Component {
-   constructor() {
-      super();
+   constructor(props) {
+      super(props);
       this.state = {
-         isAuthenticated: false,
-         currentUserId: ''
-      };
+         loggedIn: false,
+         characterID: '',
+         characterName: ''
+      }
    }
 
-      // componentDidMount() {
-      // fetch('/api/user', {mode: 'cors'})
-      //    .then(res => {
-      //       // console.log('DASHBOARD: ',res);
-      //       return res.json();
-      //    })
-      //    .then(user => {
-      //       // console.log('DASHBOARD User: ',user);
-      //       this.setState({
-      //          currentUserId: user.characterId
-      //       });
-      //    })
-      //    .catch(err => {
-      //       console.log('No info to display');
-      //       alert('Please Login First!')
-      //       window.location.href = '/';
-      //    });
-      // }
+   componentDidMount() {
+      const characterID = localStorage.characterID;
+      const characterName = localStorage.characterName;
+
+      if (!characterName) {
+         console.log('User Not Logged In. Grabbing data');
+         fetch('/api/user', {mode: 'cors'})
+            .then(res => {
+               console.log('DASHBOARD: ',res);
+               return res.json();
+            })
+            .then(data => {
+               console.log('DASHBOARD User: ',data);
+               localStorage.setItem('characterID', data.characterID);
+               localStorage.setItem('characterName', data.characterName);
+               this.setState({characterID: data.characterID});
+               this.setState({characterName: data.characterName});
+            })
+            .catch(err => {
+               console.log('No info to display');
+               // alert('Please Login First!')
+               window.location.href = '/';
+            });
+      } else {
+         console.log('User is Logged In');
+         this.setState({characterID: characterID});
+         this.setState({characterName: characterName});
+         this.setState({loggedIn: true});
+      }
+   }
 
    render() {
       return (
@@ -39,7 +52,8 @@ class App extends Component {
             <Router>
                <Switch>
                   <Route exact path='/' component={HomePage} />
-                  <Route exact path='/dashboard' component={Dashboard} />
+                  <Route exact path='/login' component={Login} />
+                  <Route exact path='/dashboard' user={this.state.characterName} component={Dashboard} />
                   <Route component={NoMatch} />
                </Switch>
             </Router>
