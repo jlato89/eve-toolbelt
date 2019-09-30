@@ -5,8 +5,8 @@ module.exports = function(app, passport, db) {
    //* Grab user Info from DB
    app.get('/api/user', (req, res) => {
       if (!req.user) {
-         console.log('User not logged in. Redirecting to /');
-         res.redirect('/')
+         console.log('SERVER: User not logged in.');
+         // res.redirect('/')
       } else {
          // Grab user data from ID of currently logged in user
          const currentUser = req.user.CharacterID;
@@ -18,12 +18,8 @@ module.exports = function(app, passport, db) {
          .then((data) => {
             const user = data.dataValues
             res.json({
-               user: {
-                  characterID: user.characterID,
-                  characterName: user.characterName,
-                  scopes: user.scopes,
-                  accessToken: data.accessToken
-               }
+               characterID: user.characterID,
+               characterName: user.characterName
             })
          });
       }
