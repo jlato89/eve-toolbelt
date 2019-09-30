@@ -19,7 +19,8 @@ module.exports = function(app, passport, db) {
             const user = data.dataValues
             res.json({
                characterID: user.characterID,
-               characterName: user.characterName
+               characterName: user.characterName,
+               accessToken: user.accessToken
             })
          });
       }
@@ -28,7 +29,7 @@ module.exports = function(app, passport, db) {
    //* Refresh Tokens from EVE AUTH
    app.get('/api/token/:id', (req, res) => {
       const characterID = req.params.id;
-      console.log('ID: ', id);
+      // console.log('ID: ', characterID);
 
       db.user
          .findOne({
@@ -84,8 +85,8 @@ module.exports = function(app, passport, db) {
                   .catch(err => {
                      console.log('DB Error: ', err);
                   });
-               // console.log(data);
-            });
+               });
+            res.json(data.accessToken);
          });
    })
 
