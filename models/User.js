@@ -23,7 +23,7 @@ module.exports = function(sequelize, Sequelize) {
          allowNull: false
       },
       scopes: {
-         type: Sequelize.STRING,
+         type: Sequelize.TEXT,
          allowNull: false
       },
       tokenType: {
@@ -35,7 +35,7 @@ module.exports = function(sequelize, Sequelize) {
          allowNull: false
       },
       refreshToken: {
-         type: Sequelize.STRING,
+         type: Sequelize.TEXT,
          allowNull: false
       }
    });
