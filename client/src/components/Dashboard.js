@@ -56,33 +56,8 @@ export class Dashboard extends Component {
       };
       const rawUrl = 'https://esi.evetech.net/latest';
 
-      // //* Api call for data
-      // Axios.get(`https://esi.evetech.net/latest/characters/95271542/wallet/`, {
-      //    headers: {
-      //       'Authorization': 'Bearer ' + accessToken
-      //    }
-      // })
-      //    .then(res => {
-      //       console.log('Returned API Data: ');
-      //       console.log('res: ', res);
-      //    })
-      //    .catch(err => {
-      //       const errRes = err.response.data.error
-      //       console.log(err.response);
-      //       // If error is caused by "Token is expired" then have server refresh access token and send back new token.
-      //       if (errRes === 'token is expired'){
-      //          console.log('Token Expired, Sending token refresh call');
-      //          Axios.get(`/api/token/${characterID}`)
-      //          .then(res => {
-      //             localStorage.setItem('accessToken', res.data);
-      //             // this.setState({accessToken: res.data})
-      //          })
-      //          .catch(err => {
-      //             console.log(err);
-      //          })
-      //       }
-      //    });
-
+      //* Api call for data
+      let results = [];
       for (const [key, value] of Object.entries(requests)) {
          const queryUrl = rawUrl+value;
          // console.log(key);
@@ -95,7 +70,11 @@ export class Dashboard extends Component {
             }
          })
          .then(res => {
-            console.log(key,':\n', res);
+            // console.log(key,':\n', res);
+            var newResult = {
+               [key]: res.data
+            }
+            results.push(newResult);
          })
          .catch(err => {
             const errRes = err.response.data.error
@@ -113,8 +92,8 @@ export class Dashboard extends Component {
                })
             }
          });
-
       }
+      console.log('final Result: ', results);
    }
 
    render() { 
