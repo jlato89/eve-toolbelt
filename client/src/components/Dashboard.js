@@ -60,8 +60,6 @@ export class Dashboard extends Component {
       let results = [];
       for (const [key, value] of Object.entries(requests)) {
          const queryUrl = rawUrl+value;
-         // console.log(key);
-         // console.log(queryUrl);
 
                //* Api call for data
          Axios.get(queryUrl, {
@@ -70,30 +68,33 @@ export class Dashboard extends Component {
             }
          })
          .then(res => {
-            // console.log(key,':\n', res);
-            var newResult = {
-               [key]: res.data
-            }
-            results.push(newResult);
+            console.log(key,':\n', res);
+            // var newResult = {
+            //    [key]: res.data
+            // }
+            // results.push(newResult);
          })
          .catch(err => {
-            const errRes = err.response.data.error
-            console.log(err.response);
+            // const errRes = err.response.data.error
+            console.log('API error:\n',err.response);
+            
             // If error is caused by "Token is expired" then have server refresh access token and send back new token.
-            if (errRes === 'token is expired'){
-               console.log('Token Expired, Sending token refresh call');
-               Axios.get(`/api/token/${characterID}`)
-               .then(res => {
-                  localStorage.setItem('accessToken', res.data);
-                  // this.setState({accessToken: res.data})
-               })
-               .catch(err => {
-                  console.log(err);
-               })
-            }
+
+            // if (errRes === 'token is expired'){
+            //    console.log('Token Expired, Sending token refresh call');
+            //    Axios.get(`/api/token/${characterID}`)
+            //    .then(res => {
+            //       localStorage.setItem('accessToken', res.data);
+            //       return
+            //       // this.setState({accessToken: res.data})
+            //    })
+            //    .catch(err => {
+            //       console.log(err);
+            //    })
+            // }
          });
       }
-      console.log('final Result: ', results);
+      // console.log('final Result: ', results);
    }
 
    render() { 
