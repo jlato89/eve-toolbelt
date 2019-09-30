@@ -1,70 +1,51 @@
 import React, { Component } from 'react';
 
 export class Dashboard extends Component {
-   constructor() {
-      super();
-      this.state = {
-         user: {},
-         location: {}
-      }
-   }
+   // constructor() {
+   //    super();
+   //    this.state = {
+   //       loggedIn: false,
+   //       characterID: '',
+   //       characterName: ''
+   //    }
+   // }
 
-   async componentDidMount() {
-      await fetch('/api/user', {mode: 'cors'})
-         .then(res => {
-            // console.log('DASHBOARD: ',res);
-            return res.json();
-         })
-         .then(user => {
-            // console.log('DASHBOARD User: ',user);
-            this.setState(user);
-         })
-         .catch(err => {
-            console.log('No info to display');
-            alert('Please Login First!')
-            window.location.href = '/';
-         });
+   // componentDidMount() {
+   //    const characterID = localStorage.characterID;
+   //    const characterName = localStorage.characterName;
 
-      // console.log('UserId: ',this.state.user.characterName);
-      // const userId = this.state.user.characterID;
-      // const url = 'https://esi.evetech.net/latest/characters/'+userId+'/location';
-      // await fetch('https://esi.evetech.net/latest/characters/'+this.state.user.characterID+'/location', {
-      //    headers: {
-      //       Authorization: 'Bearer '+this.state.user.accessToken
-      //    }
-      //    })
-      //    .then(res => {
-      //       return res.json()
-      //    })
-      //    .then(data => {
-      //       console.log(data);
-      //       if (data.sso_status === 401) {
-      //          console.log('access Token Expired');
-      //          fetch('https://login.eveonline.com/v2/oauth/token HTTP/1.1', {
-      //             headers: {
-      //                Content-Type: 'application/x-www-form-urlencoded',
-      //                Host: 'login.eveonline.com',
-      //                Authorization: 'Basic '+this.user.refreshToken 
-      //             }
-      //          })
-      //             .then(res => {
-      //                return res.json();
-      //             })
-      //             .then(token => {
-      //                console.log('Token: ', token);
-      //             });
-      //       }
-      //    })
-      //    .catch(err => {
-      //       console.log('ESI Err: \n',err);
-      //    })
-   }
+   //    if (!characterName) {
+   //       console.log('User Not Logged In. Grabbing data');
+   //       fetch('/api/user', {mode: 'cors'})
+   //          .then(res => {
+   //             console.log('DASHBOARD: ',res);
+   //             return res.json();
+   //          })
+   //          .then(data => {
+   //             console.log('DASHBOARD User: ',data);
+   //             localStorage.setItem('characterID', data.characterID);
+   //             localStorage.setItem('characterName', data.characterName);
+   //             this.setState({characterID: data.characterID});
+   //             this.setState({characterName: data.characterName});
+   //          })
+   //          .catch(err => {
+   //             console.log('No info to display');
+   //             // alert('Please Login First!')
+   //             window.location.href = '/';
+   //          });
+   //    } else {
+   //       console.log('User is Logged In');
+   //       this.setState({characterID: characterID});
+   //       this.setState({characterName: characterName});
+   //       this.setState({loggedIn: true});
+   //    }
+   // }
 
    render() { 
       return (
          <>
             <h1>Dashboard Page</h1>
-            <h2>Welcome {this.state.user.characterName}!</h2>
+            <h2>Welcome {this.props.characterName}<sup>({this.props.characterID})</sup>!</h2>
          </>
       );
    }
