@@ -30,7 +30,7 @@ module.exports = function(app, passport, db) {
          characterUnreadMailCount: `/characters/${characterID}/mail/labels/`,
          characterSkillQueue: `/characters/${characterID}/skillqueue/`
       };
-      let results = []; //! Need to find better solution without indexes
+      let results = [];
 
       db.token.findByPk(characterID).then(res => {
          const accessToken = res.dataValues.accessToken;
@@ -52,15 +52,15 @@ module.exports = function(app, passport, db) {
                // console.log(newResult);
             })
             .catch(err => {
-               if (err.response.data.error == 'token is expired') {
                   console.log('API Error: Status ', err.response.status, ' - ', err.response.data.error);
-               } else {
-                  console.log('Other Error:\n',err.response);
-               }
             });
          }
       })
-      setTimeout(function() {res.json(results);}, 2000); //! Testing purposes ONLY
+      .catch(err => {
+         console.log(err);
+      });
+
+      setTimeout(function() {res.json(results);}, 3000); //! Testing purposes ONLY
       // res.json(results); // WORKING but may need to find async/wait solution
    });
 
@@ -69,20 +69,10 @@ module.exports = function(app, passport, db) {
    app.get('/api/token/:id', (req, res) => {
       const characterID = req.params.id;
 
-      db.token
-         .findOne({
-            where: {
-               characterID: characterID
-            }
-         })
-         .then(data => {
+      db.token.findByPk(characterID).then(data => {
             const refreshToken = data.refreshToken;
-            const rawAuth =
-               process.env.EVEONLINE_CLIENT_ID +
-               ':' +
-               process.env.EVEONLINE_SECRET_KEY;
-            // Encode into base64
-            const buff = new Buffer.from(rawAuth);
+            const rawAuth = process.env.EVEONLINE_CLIENT_ID+':'+process.env.EVEONLINE_SECRET_KEY;
+            const buff = new Buffer.from(rawAuth); // Encode into base64
             const auth64 = buff.toString('base64');
 
             const options = {
@@ -98,20 +88,15 @@ module.exports = function(app, passport, db) {
                   refresh_token: refreshToken
                }
             };
-
             request(options, function(error, response, body) {
                if (error) throw new Error(error);
-
-               // Convert body to JSON
-               const data = JSON.parse(body)
-
+               const data = JSON.parse(body); // Convert body to JSON
                db.token
                   .update(
                      {
                         accessToken: data.access_token,
                         refreshToken: data.refresh_token
-                     },
-                     {
+                     }, {
                         where: {
                            characterID: characterID
                         }
@@ -123,10 +108,9 @@ module.exports = function(app, passport, db) {
                   .catch(err => {
                      console.log('DB Error: ', err);
                   });
-               });
-            // res.json(data.accessToken);
-         });
-      res.json({msg: 'Done'})
+            });
+      });
+      res.json({msg: 'Token updated, Maybe, check logs'});
    })
 
    //*  EVE Online Login proccess
