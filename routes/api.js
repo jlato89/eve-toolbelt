@@ -54,18 +54,17 @@ module.exports = function(app, passport, db) {
                }
             })
             .then(res => {
-               var newResult = {
-                  [key]: res.data
-               }
-               // console.log(newResult);
+               var newResult ={ [key]: res.data }
+               
                results.push(newResult);
+               // console.log(newResult);
             })
             .catch(err => {
                console.log('API Error: Status ', err.response.status, ' - ', err.response.data.error);
             });
          }
-      });
-      setTimeout(function() {res.json(results);}, 5000); //! Testing purposes ONLY
+      })
+      setTimeout(function() {res.json(results);}, 3000); //! Testing purposes ONLY
       // res.json(results); // WORKING but may need to find async/wait solution
    });
 
