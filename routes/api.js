@@ -9,21 +9,13 @@ module.exports = function(app, passport, db) {
          console.log('SERVER: User not logged in.');
          // res.redirect('/')
       } else {
-         // Grab user data from ID of currently logged in user
-         const currentUser = req.user.CharacterID;
-         db.user.findOne({
-            where: {
-               characterID: currentUser
-            }
+         const characterID = req.user.CharacterID;
+         const characterName = req.user.CharacterName;
+         
+         res.json({
+            characterID,
+            characterName
          })
-         .then((data) => {
-            const user = data.dataValues
-            res.json({
-               characterID: user.characterID,
-               characterName: user.characterName,
-               accessToken: user.accessToken
-            })
-         });
       }
    });
 
@@ -60,11 +52,15 @@ module.exports = function(app, passport, db) {
                // console.log(newResult);
             })
             .catch(err => {
-               console.log('API Error: Status ', err.response.status, ' - ', err.response.data.error);
+               if (err.response.data.error == 'token is expired') {
+                  console.log('API Error: Status ', err.response.status, ' - ', err.response.data.error);
+               } else {
+                  console.log('Other Error:\n',err.response);
+               }
             });
          }
       })
-      setTimeout(function() {res.json(results);}, 3000); //! Testing purposes ONLY
+      setTimeout(function() {res.json(results);}, 2000); //! Testing purposes ONLY
       // res.json(results); // WORKING but may need to find async/wait solution
    });
 
