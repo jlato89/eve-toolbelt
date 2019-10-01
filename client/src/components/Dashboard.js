@@ -7,7 +7,7 @@ export class Dashboard extends Component {
       this.state = {
          characterID: '',
          characterName: '',
-         apiData: []
+         apiData: {}
       }
    }
 
@@ -18,7 +18,7 @@ export class Dashboard extends Component {
 
       if (!characterName || !characterID) {
          // console.log('User Not Logged In. Grabbing data');
-         Axios('/api/user', {mode: 'cors'})
+         Axios('/api/user')
             .then(res => {
                return res.json();
             })
@@ -43,6 +43,7 @@ export class Dashboard extends Component {
       Axios(`/api/eve/${characterID}`)
          .then(res => {
             console.log('API Data:\n',res.data);
+            this.setState({apiData: res.data});
          })
 
    }
