@@ -32,8 +32,8 @@ module.exports = function(app, passport, db) {
       };
       let results = [];
 
-      db.token.findByPk(characterID).then(res => {
-         const accessToken = res.dataValues.accessToken;
+      db.token.findByPk(characterID).then(data => {
+         const accessToken = data.dataValues.accessToken;
 
          // Start forloop to loop through axios calls
          for (const [key, value] of Object.entries(requests)) {
@@ -45,8 +45,8 @@ module.exports = function(app, passport, db) {
                   Authorization: 'Bearer ' + accessToken
                }
             })
-            .then(res => {
-               var newResult ={ [key]: res.data }
+            .then(data => {
+               var newResult ={ [key]: data.data }
                
                results.push(newResult);
                // console.log(newResult);
@@ -55,13 +55,12 @@ module.exports = function(app, passport, db) {
                   console.log('API Error: Status ', err.response.status, ' - ', err.response.data.error);
             });
          }
+         // res.json(results); //! WORKING but may need to find async/wait solution
+         setTimeout(function() {res.json(results);}, 2000); //! Testing purposes ONLY
       })
       .catch(err => {
-         console.log(err);
+         throw err
       });
-
-      setTimeout(function() {res.json(results);}, 3000); //! Testing purposes ONLY
-      // res.json(results); // WORKING but may need to find async/wait solution
    });
 
 
@@ -106,7 +105,7 @@ module.exports = function(app, passport, db) {
                      console.log('DB Records Updated: ', res);
                   })
                   .catch(err => {
-                     console.log('DB Error: ', err);
+                     throw err;
                   });
             });
       });
