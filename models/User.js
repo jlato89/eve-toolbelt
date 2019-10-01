@@ -25,14 +25,6 @@ module.exports = function(sequelize, Sequelize) {
       tokenType: {
          type: Sequelize.STRING,
          allowNull: false
-      },
-      accessToken: {
-         type: Sequelize.TEXT,
-         allowNull: false
-      },
-      refreshToken: {
-         type: Sequelize.TEXT,
-         allowNull: false
       }
    });
 
