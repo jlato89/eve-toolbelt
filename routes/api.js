@@ -1,5 +1,6 @@
 const request = require('request');
 const axios = require('axios')
+const moment = require('moment')
 
 module.exports = function(app, passport, db) {
    
@@ -34,23 +35,32 @@ module.exports = function(app, passport, db) {
 
       db.token.findByPk(characterID).then(data => {
          const accessToken = data.dataValues.accessToken;
+         const updatedAt = Math.round(new Date(data.dataValues.updatedAt).getTime() / 1000);
+         const date = Math.round(new Date().getTime()/1000);
+         console.log('DB Date ', updatedAt);
+         console.log('TH Date ', date);
 
-         // Start forloop to loop through axios calls
-         for (const [key, value] of Object.entries(requests)) {
-            const queryUrl = url + value;
-   
-            // Api call for data
-            axios(queryUrl, {
-               headers: {
-                  Authorization: 'Bearer ' + accessToken
-               }
-            })
-            .then(result => {
-               results[key] = result.data;
-            })
-            .catch(err => {
-                  console.log('API Error: Status ', err.response.status, ' - ', err.response.data.error);
-            });
+         if (updatedAt <= date) {
+            console.log('Access Token has expired, Please Renew it.');
+         } else {
+            console.log('Token Valid');
+            // Start forloop to loop through axios calls
+            for (const [key, value] of Object.entries(requests)) {
+               const queryUrl = url + value;
+      
+               // Api call for data
+               axios(queryUrl, {
+                  headers: {
+                     Authorization: 'Bearer ' + accessToken
+                  }
+               })
+               .then(result => {
+                  results[key] = result.data;
+               })
+               .catch(err => {
+                     console.log('API Error: Status ', err.response.status, ' - ', err.response.data.error);
+               });
+            }
          }
          // res.json(results); //! WORKING but may need to find async/wait solution
          setTimeout(function() {res.json(results);}, 2000); //! Testing purposes ONLY
