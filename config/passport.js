@@ -42,48 +42,37 @@ module.exports = function(passport, db) {
             process.nextTick(function() {
                // You could save the tokens to a database and/or call EVE Swaggger Interface (ESI) resources.
 
-               console.log('=== New Login ===');
-               console.log('accessToken:', accessToken);
-               console.log('refreshToken:', refreshToken);
+               // console.log('=== New Login ===');
+               // console.log('accessToken:', accessToken);
+               // console.log('refreshToken:', refreshToken);
                // console.log('profile:', profile);
-               console.log('=== End of Login ===');
+               // console.log('=== End of Login ===');
 
-               //* Add User and Tokens to DB
-               db.user.findOne({
-                  where: {
-                     characterID: profile.CharacterID
-                  }
+               //* Add User to DB
+               db.user.upsert({
+                  characterID: profile.CharacterID,
+                  characterName: profile.CharacterName,
+                  characterOwnerHash: profile.CharacterOwnerHash,
+                  expiresOn: profile.ExpiresOn,
+                  scopes: profile.Scopes,
+                  tokenType: profile.TokenType
                })
-               .then((user) => {
-                  console.log('PASSPORT - Saving User to DB....');
-                  if (user) {
-                     console.log('PASSPORT - User already exists in DB, skipping');
-                     // return done(null, false)
-                  } else {
-                     const newUser = {
-                        characterID: profile.CharacterID,
-                        characterName: profile.CharacterName,
-                        characterOwnerHash: profile.CharacterOwnerHash,
-                        expiresOn: profile.ExpiresOn,
-                        scopes: profile.Scopes,
-                        tokenType: profile.TokenType,
-                        accessToken,
-                        refreshToken
-                     }
-                     // console.log('PASSPORT USER: \n',newUser);
-                     db.user.create(newUser)
-                     .then((newUser, created) => {
-                        if (!newUser) {
-                           // return done(null, false);
-                        }
-                        if (newUser) {
-                           console.log('PASSPORT - User and Tokens have been added Successfully');
-                           // return done(null, newToken);
-                        }
-                     })
-                     .catch((err) => console.log('PASSPORT ERROR: \n',err));
-                  }
+               .then(res => {
+                  if (!res) { console.log('User Updated'); }
+                  else { console.log('User Created'); }
                });
+
+               //* Add tokens to DB
+               db.token.upsert({
+                  characterID: profile.CharacterID,
+                  accessToken: accessToken,
+                  refreshToken: refreshToken
+               })
+               .then(res => {
+                  if (!res) { console.log('Token Updated'); }
+                  else { console.log('Token Created'); }
+               });
+               
                return done(null, profile);
             });
          }
