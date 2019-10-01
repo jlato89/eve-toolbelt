@@ -1,4 +1,5 @@
 const request = require('request');
+const axios = require('axios')
 
 module.exports = function(app, passport, db) {
    
@@ -26,12 +27,54 @@ module.exports = function(app, passport, db) {
       }
    });
 
+   //* EVE Online Api Data Call
+   app.get('/api/eve/:id', (req, res) => {
+      const characterID = req.params.id;
+      const url = 'https://esi.evetech.net/latest';
+      const requests = {
+         characterIsk: `/characters/${characterID}/wallet/`,
+         characterLocation: `/characters/${characterID}/location/`,
+         characterActiveShip: `/characters/${characterID}/ship/`,
+         characterUnreadMailCount: `/characters/${characterID}/mail/labels/`,
+         characterSkillQueue: `/characters/${characterID}/skillqueue/`
+      };
+      let results = []; //! Need to find better solution without indexes
+
+      db.token.findByPk(characterID).then(res => {
+         const accessToken = res.dataValues.accessToken;
+
+         // Start forloop to loop through axios calls
+         for (const [key, value] of Object.entries(requests)) {
+            const queryUrl = url + value;
+   
+            // Api call for data
+            axios(queryUrl, {
+               headers: {
+                  Authorization: 'Bearer ' + accessToken
+               }
+            })
+            .then(res => {
+               var newResult = {
+                  [key]: res.data
+               }
+               // console.log(newResult);
+               results.push(newResult);
+            })
+            .catch(err => {
+               console.log('API Error: Status ', err.response.status, ' - ', err.response.data.error);
+            });
+         }
+      });
+      setTimeout(function() {res.json(results);}, 5000); //! Testing purposes ONLY
+      // res.json(results); // WORKING but may need to find async/wait solution
+   });
+
+
    //* Refresh Tokens from EVE AUTH
    app.get('/api/token/:id', (req, res) => {
       const characterID = req.params.id;
-      // console.log('ID: ', characterID);
 
-      db.user
+      db.token
          .findOne({
             where: {
                characterID: characterID
@@ -67,7 +110,7 @@ module.exports = function(app, passport, db) {
                // Convert body to JSON
                const data = JSON.parse(body)
 
-               db.user
+               db.token
                   .update(
                      {
                         accessToken: data.access_token,
@@ -86,8 +129,9 @@ module.exports = function(app, passport, db) {
                      console.log('DB Error: ', err);
                   });
                });
-            res.json(data.accessToken);
+            // res.json(data.accessToken);
          });
+      res.json({msg: 'Done'})
    })
 
    //*  EVE Online Login proccess
