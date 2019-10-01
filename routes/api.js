@@ -30,7 +30,7 @@ module.exports = function(app, passport, db) {
          characterUnreadMailCount: `/characters/${characterID}/mail/labels/`,
          characterSkillQueue: `/characters/${characterID}/skillqueue/`
       };
-      let results = [];
+      let results = {};
 
       db.token.findByPk(characterID).then(data => {
          const accessToken = data.dataValues.accessToken;
@@ -45,11 +45,8 @@ module.exports = function(app, passport, db) {
                   Authorization: 'Bearer ' + accessToken
                }
             })
-            .then(data => {
-               var newResult ={ [key]: data.data }
-               
-               results.push(newResult);
-               // console.log(newResult);
+            .then(result => {
+               results[key] = result.data;
             })
             .catch(err => {
                   console.log('API Error: Status ', err.response.status, ' - ', err.response.data.error);
