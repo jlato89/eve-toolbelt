@@ -1,9 +1,7 @@
 const request = require('request');
-const axios = require('axios')
-const moment = require('moment')
+const axios = require('axios');
 
 module.exports = function(app, passport, db) {
-   
    //* Grab user Info from DB
    app.get('/api/user', (req, res) => {
       if (!req.user) {
@@ -12,11 +10,11 @@ module.exports = function(app, passport, db) {
       } else {
          const characterID = req.user.CharacterID;
          const characterName = req.user.CharacterName;
-         
+
          res.json({
             characterID,
             characterName
-         })
+         });
       }
    });
 
@@ -34,55 +32,69 @@ module.exports = function(app, passport, db) {
       let results = {};
 
       // Grab token info
-      db.token.findByPk(characterID).then(data => {
-         const accessToken = data.dataValues.accessToken;
-         const updatedAt = new Date(data.dataValues.updatedAt);
-         updatedAt.setMinutes(updatedAt.getMinutes() + 20);
-         const tokenExpires = Math.round(new Date(updatedAt).getTime() / 1000);
-         const date = Math.round(new Date().getTime()/1000);
+      db.token
+         .findByPk(characterID)
+         .then(data => {
+            const accessToken = data.dataValues.accessToken;
+            const updatedAt = new Date(data.dataValues.updatedAt);
+               updatedAt.setMinutes(updatedAt.getMinutes() + 20);
+            const tokenExpires = Math.round(
+               new Date(updatedAt).getTime() / 1000
+            );
+            const date = Math.round(new Date().getTime() / 1000);
 
-         // Check if token needs to be updated before running api call
-         if (date > tokenExpires) {
-            console.log('Access Token has expired, Please renew it.');
-            results.error = 'Token has expired, Please renew it.';
-         } else {
-            console.log('Token Valid');
+            // Check if token needs to be updated before running api call
+            if (date > tokenExpires) {
+               console.log('Access Token has expired, Please renew it.');
+               results.error = 'Token has expired, Please renew it.';
 
-            // Start looping through axios calls
-            for (const [key, value] of Object.entries(requests)) {
-               const queryUrl = url + value;
+               // run token refresh route if token is expired
+               axios.get(`http://localhost:8080/api/token/${characterID}`);
+            } else {
+               console.log('Token Valid');
 
-               // Api call data
-               axios(queryUrl, {
-                  headers: {
-                     Authorization: 'Bearer ' + accessToken
-                  }
-               })
+               // Start looping through axios calls
+               for (const [key, value] of Object.entries(requests)) {
+                  const queryUrl = url + value;
+
+                  // Api call data
+                  axios(queryUrl, {
+                     headers: {
+                        Authorization: 'Bearer ' + accessToken
+                     }
+                  })
                   .then(result => {
                      // Result of api call sent to results array
                      results[key] = result.data;
                   })
                   .catch(err => {
-                     console.log(`API Error: \nStatus ${err.response.status} \n ${err.response.data.error}`);
+                     console.log(
+                        `API Error: \nStatus ${err.response.status} \n ${err.response.data.error}`
+                     );
                   });
+               }
             }
-         }
-         // res.json(results); //! WORKING but may need to find async/wait solution
-         setTimeout(function() {res.json(results);}, 2000); //! Testing purposes ONLY
-      })
-      .catch(err => {
-         throw err
-      });
+            // setTimeout(function() {res.json(results);}, 2000); //! Testing purposes ONLY
+         })
+         .then(finish => {
+            res.json(results); //! WORKING but may need to find async/wait solution
+         })
+         .catch(err => {
+            throw err;
+         });
    });
-
 
    //* Refresh Tokens from EVE AUTH
    app.get('/api/token/:id', (req, res) => {
       const characterID = req.params.id;
 
-      db.token.findByPk(characterID).then(data => {
+      db.token.findByPk(characterID)
+         .then(data => {
             const refreshToken = data.refreshToken;
-            const rawAuth = process.env.EVEONLINE_CLIENT_ID+':'+process.env.EVEONLINE_SECRET_KEY;
+            const rawAuth =
+               process.env.EVEONLINE_CLIENT_ID +
+               ':' +
+               process.env.EVEONLINE_SECRET_KEY;
             const buff = new Buffer.from(rawAuth); // Encode into base64
             const auth64 = buff.toString('base64');
 
@@ -107,7 +119,8 @@ module.exports = function(app, passport, db) {
                      {
                         accessToken: data.access_token,
                         refreshToken: data.refresh_token
-                     }, {
+                     },
+                     {
                         where: {
                            characterID: characterID
                         }
@@ -120,14 +133,12 @@ module.exports = function(app, passport, db) {
                      throw err;
                   });
             });
-      });
-      res.json({msg: 'Token updated, Maybe, check logs'});
-   })
+         });
+      res.json({ msg: 'Token updated, Maybe, check logs' });
+   });
 
    //*  EVE Online Login proccess
-   app.get('/auth/eveonline', 
-      passport.authenticate('eveonline-sso')
-   );
+   app.get('/auth/eveonline', passport.authenticate('eveonline-sso'));
 
    //* EVE Online Callback
    app.get(
@@ -139,7 +150,7 @@ module.exports = function(app, passport, db) {
       function(req, res) {
          console.log('~~~ Made it to callback ~~~');
          // console.log('profile: \n', req.user._json);
-         
+
          res.redirect('http://localhost:3000/dashboard');
       }
    );
