@@ -12,8 +12,8 @@ class Wallet extends Component {
    }
 
    UNSAFE_componentWillReceiveProps(props) {
-      // Check if characterID exists and walletIsk doesnt
-      if (props.characterID && !this.state.walletIsk) {
+      // Check if characterID exists
+      if (props.characterID) {
          axios
             .post('/api/data', {
                dataType: 'characters',
