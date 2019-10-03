@@ -18,6 +18,7 @@ module.exports = function(app, passport, db) {
       }
    });
 
+   // Dynamic API data Route
    app.post('/api/data', (req, res) => {
       const dataType = req.body.dataType;
       const characterID = req.body.characterID;
@@ -52,13 +53,21 @@ module.exports = function(app, passport, db) {
                   }
                })
                   .then(result => {
-                     // Result of api call sent to React
-                     res.json(result.data);                    
+                     let data = result.data
+                     const idCheck = JSON.stringify(data).includes('_id');
+                     
+                     // Check if any IDs exist. 
+                     // If so resolve IDs to names using Axios
+                     if (idCheck) {
+                        console.log('TRUE');
+                     } else {
+                        console.log('FALSE');
+                     }
+                     // Send results to React
+                     res.json(data);                    
                   })
                   .catch(err => {
-                     console.log(
-                        `API Error: \nStatus ${err.response.status} \n ${err.response.data.error}`
-                     );
+                     console.log(err);
                   });
             }
          })
