@@ -23,7 +23,7 @@ class CurrentShip extends Component {
                console.log(res.data);
                this.setState({currentShip: res.data})
             })
-            .catch(err => console.log('Wallet.js AXIOS: ', err));
+            .catch(err => console.log(err));
       } else {
          console.log('no character id');
       }
