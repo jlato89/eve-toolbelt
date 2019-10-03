@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import Axios from 'axios';
 import Wallet from './Wallet';
 import CurrentShip from './CurrentShip';
+import CurrentLocation from './CurrentLocation';
+import CharacterMailLabels from './CharacterMailLabels';
+import CharacterPortrait from './CharacterPortrait';
 
 export class Dashboard extends Component {
    constructor() {
@@ -55,8 +58,11 @@ export class Dashboard extends Component {
          <>
             <h1>Dashboard Page</h1>
             <h2>Welcome {this.state.characterName}<sup>({this.state.characterID})</sup>!</h2>
-            <Wallet characterID={this.state.characterID}/>
-            <CurrentShip characterID={this.state.characterID}/>
+            <CharacterPortrait characterID={this.state.characterID} />
+            <CharacterMailLabels characterID={this.state.characterID} />
+            <Wallet characterID={this.state.characterID} />
+            <CurrentShip characterID={this.state.characterID} />
+            <CurrentLocation characterID={this.state.characterID} />
          </>
       );
    }
