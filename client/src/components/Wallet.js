@@ -7,7 +7,7 @@ class Wallet extends Component {
       super();
       this.state = {
          characterID: '',
-         walletIsk: ''
+         WalletIsk: ''
       };
    }
 
@@ -22,7 +22,7 @@ class Wallet extends Component {
             })
             .then(res => {
                console.log(res.data);
-               this.setState({walletIsk: res.data})
+               this.setState({WalletIsk: res.data})
             })
             .catch(err => console.log(err));
       } else {
@@ -36,7 +36,7 @@ class Wallet extends Component {
             <p>
                Wallet Balance -{' '}
                <NumberFormat
-                  value={this.state.walletIsk}
+                  value={this.state.WalletIsk}
                   displayType={'text'}
                   thousandSeparator={true}
                   prefix={'$'}
