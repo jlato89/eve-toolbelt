@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Axios from 'axios';
+import Wallet from './Wallet';
 
 export class Dashboard extends Component {
    constructor() {
@@ -40,11 +41,11 @@ export class Dashboard extends Component {
       }
 
       //* Get API Data
-      Axios(`/api/eve/${characterID}`)
-         .then(res => {
-            console.log('API Data:\n',res.data);
-            this.setState({apiData: res.data});
-         })
+      // Axios(`/api/eve/${characterID}`)
+      //    .then(res => {
+      //       console.log('API Data:\n',res.data);
+      //       this.setState({apiData: res.data});
+      //    })
 
    }
 
@@ -53,6 +54,7 @@ export class Dashboard extends Component {
          <>
             <h1>Dashboard Page</h1>
             <h2>Welcome {this.state.characterName}<sup>({this.state.characterID})</sup>!</h2>
+            <Wallet characterID={this.state.characterID}/>
          </>
       );
    }
