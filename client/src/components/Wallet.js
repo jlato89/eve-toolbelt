@@ -24,7 +24,7 @@ class Wallet extends Component {
                console.log(res.data);
                this.setState({walletIsk: res.data})
             })
-            .catch(err => console.log('Wallet.js AXIOS: ', err));
+            .catch(err => console.log(err));
       } else {
          console.log('no character id');
       }
