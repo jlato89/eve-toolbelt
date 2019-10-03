@@ -6,7 +6,7 @@ class CurrentShip extends Component {
       super();
       this.state = {
          characterID: '',
-         currentShip: {}
+         CurrentShip: {}
       };
    }
 
@@ -21,7 +21,7 @@ class CurrentShip extends Component {
             })
             .then(res => {
                console.log(res.data);
-               this.setState({currentShip: res.data})
+               this.setState({CurrentShip: res.data})
             })
             .catch(err => console.log(err));
       } else {
@@ -33,7 +33,7 @@ class CurrentShip extends Component {
       return (
          <div>
             <p>
-               Current Ship - SHIP({this.state.currentShip.ship_name})
+               Current Ship - SHIP({this.state.CurrentShip.ship_name})
             </p>
          </div>
       );
