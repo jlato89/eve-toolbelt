@@ -18,6 +18,55 @@ module.exports = function(app, passport, db) {
       }
    });
 
+   app.post('/api/data', (req, res) => {
+      const dataType = req.body.dataType;
+      const characterID = req.body.characterID;
+      const endPoint = req.body.endPoint;
+      const queryUrl = `https://esi.evetech.net/latest/${dataType}/${characterID}/${endPoint}/`;
+
+      db.token
+         .findByPk(characterID)
+         .then(data => {
+            const accessToken = data.dataValues.accessToken;
+            const updatedAt = new Date(data.dataValues.updatedAt);
+            updatedAt.setMinutes(updatedAt.getMinutes() + 20);
+            const tokenExpires = Math.round(
+               new Date(updatedAt).getTime() / 1000
+            );
+            const date = Math.round(new Date().getTime() / 1000);
+
+            // Check if token needs to be updated before running api call
+            if (date > tokenExpires) {
+               console.log('Access Token has expired, Please renew it.');
+               // results.error = 'Token has expired, Please renew it.';
+
+               // run token refresh route if token is expired
+               axios.get(`http://localhost:8080/api/token/${characterID}`);
+            } else {
+               console.log('Token Valid');
+
+               // Api call data
+               axios(queryUrl, {
+                  headers: {
+                     Authorization: 'Bearer ' + accessToken
+                  }
+               })
+                  .then(result => {
+                     // Result of api call sent to React
+                     res.json(result.data);                    
+                  })
+                  .catch(err => {
+                     console.log(
+                        `API Error: \nStatus ${err.response.status} \n ${err.response.data.error}`
+                     );
+                  });
+            }
+         })
+         .catch(err => {
+            throw err;
+         });
+   })
+
    //* EVE Online Api Data Call
    app.get('/api/eve/:id', (req, res) => {
       const characterID = req.params.id;
@@ -74,10 +123,7 @@ module.exports = function(app, passport, db) {
                   });
                }
             }
-            // setTimeout(function() {res.json(results);}, 2000); //! Testing purposes ONLY
-         })
-         .then(finish => {
-            res.json(results); //! WORKING but may need to find async/wait solution
+            setTimeout(function() {res.json(results);}, 2000); //! Testing purposes ONLY
          })
          .catch(err => {
             throw err;
