@@ -102,7 +102,6 @@ module.exports = function(app, passport, db) {
 
                      // Check if any IDs exist in data. 
                      // If so resolve IDs to names using Axios
-//////////////////////////////////////////////////////////////!
                      if (idCheck) {
                         console.log('******** ', endPoint, ' endPoint ********');
                         const validIds = /character_id|corporation_id|alliance_id|station_id|system_id|constellation_id|region_id|type_id/g;
@@ -131,7 +130,7 @@ module.exports = function(app, passport, db) {
                               const array = staticData.data;
                               const arrayToObject = array =>
                                  array.reduce((obj, item) => {
-                                    obj[item.id] = item.name;
+                                    obj[item.category] = item.name;
                                     return obj;
                                  }, {});
                               const staticDataObj = arrayToObject(array);
@@ -152,7 +151,6 @@ module.exports = function(app, passport, db) {
                      } else {
                         res.json(data);
                      }
-//////////////////////////////////////////////////////////////!
                   })
                   .catch(err => {
                      console.log(err);
