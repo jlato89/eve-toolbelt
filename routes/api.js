@@ -104,7 +104,7 @@ module.exports = function(app, passport, db) {
                      // If so resolve IDs to names using Axios
 //////////////////////////////////////////////////////////////!
                      if (idCheck) {
-                        console.log(endPoint, ': IDs exist');
+                        console.log('******** ', endPoint, ' endPoint ********');
                         const validIds = /character_id|corporation_id|alliance_id|station_id|system_id|constellation_id|region_id|type_id/g;
                         const ids = [];
 
@@ -115,12 +115,12 @@ module.exports = function(app, passport, db) {
                               if (key.match(validIds)) {
                                  ids.push(value);
                                  console.log('Match: ', key);
-                              } else {
-                                 console.log('No Match: ', key);
                               }
                            }
                         }
                         console.log('Ids to be resolved: ', ids);
+                        console.log('***********************************');
+
 
                         axios
                            .post(
@@ -128,21 +128,28 @@ module.exports = function(app, passport, db) {
                               ids
                            )
                            .then(staticData => {
-                              console.log('ARRAY?: ',staticData.data);
+                              const array = staticData.data;
+                              const arrayToObject = array =>
+                                 array.reduce((obj, item) => {
+                                    obj[item.id] = item.name;
+                                    return obj;
+                                 }, {});
+                              const staticDataObj = arrayToObject(array);
+                              console.log('arrayToObj Result:\n', staticDataObj);
 
                               // Send results to React
                               res.json({
-                                 data, 
-                                 data2: staticData.data
+                                 data,
+                                 staticDataObj
                               });                    
                            })
                            .catch(err => {
-                              console.log('api.js ERROR:\n', err.respons);
+                              console.log('api.js ERROR:\n', err.repsonse, '\n', err.response.data);
+                              // throw err
                            });
 
                         // newObj[key] = data
                      } else {
-                        console.log(endPoint,': No ID exists');
                         res.json(data);
                      }
 //////////////////////////////////////////////////////////////!
