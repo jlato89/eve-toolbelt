@@ -6,7 +6,8 @@ class CurrentLocation extends Component {
       super();
       this.state = {
          characterID: '',
-         CurrentLocation: {}
+         CurrentLocation: {},
+         staticData: {}
       };
    }
 
@@ -21,7 +22,10 @@ class CurrentLocation extends Component {
             })
             .then(res => {
                console.log(res.data);
-               this.setState({CurrentLocation: res.data})
+               this.setState({
+                  CurrentLocation: res.data.data,
+                  staticData: res.data.staticDataObj
+               });
             })
             .catch(err => console.log(err));
       } else {
@@ -33,7 +37,8 @@ class CurrentLocation extends Component {
       return (
          <div>
             <p>
-               Current Location - {this.state.CurrentLocation.structure_id} - {this.state.CurrentLocation.solar_system_id}
+               Current Location - {this.state.CurrentLocation.structure_id} -{' '}
+               {this.state.staticData.solar_system}
             </p>
          </div>
       );
