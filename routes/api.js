@@ -18,6 +18,50 @@ module.exports = function(app, passport, db) {
       }
    });
 
+   app.get('/api/test', (req, res) => {
+      const rawData = {
+         solar_system_id: 30004733,
+         structure_id: 1026355025332,
+         ship_item_id: 1020527701975,
+         ship_name: 'Big Mamma',
+         ship_type_id: 28352
+      };
+      const ids = [];
+      const validIds = /character_id|corporation_id|alliance_id|station_id|system_id|constellation_id|region_id|type_id/g;
+
+      for (const [key, value] of Object.entries(rawData)) {
+
+         // Look for all KEYS ending in _id
+         if (key.match(/_id/gi)) {
+
+            // now look for specific _id KEYS
+            if (key.match(validIds)) {
+               ids.push(value)
+               console.log('Match: ', key);
+            } else {
+               console.log('No Match: ', key);
+            }
+         }
+      }
+      console.log('Ids to be resolved: ', ids);
+      
+      axios.post(
+         `https://esi.evetech.net/latest/universe/names/`, 
+         ids
+      )
+      .then(data => {
+         console.log('api.js DATA:\n', data.data);
+         // console.log('axios get values: ', getValues(data.data, 'name'));
+
+         console.log(Object.values(data.data));
+
+         res.json(data.data);
+      })
+      .catch(err => {
+         console.log('api.js ERROR:\n', err.response);
+      });
+   });
+
    // Dynamic API data Route
    app.post('/api/data', (req, res) => {
       const dataType = req.body.dataType;
@@ -53,18 +97,55 @@ module.exports = function(app, passport, db) {
                   }
                })
                   .then(result => {
-                     let data = result.data
+                     let data = result.data;
                      const idCheck = JSON.stringify(data).includes('_id');
-                     
-                     // Check if any IDs exist. 
+
+                     // Check if any IDs exist in data. 
                      // If so resolve IDs to names using Axios
+//////////////////////////////////////////////////////////////!
                      if (idCheck) {
-                        console.log('TRUE');
+                        console.log(endPoint, ': IDs exist');
+                        const validIds = /character_id|corporation_id|alliance_id|station_id|system_id|constellation_id|region_id|type_id/g;
+                        const ids = [];
+
+                        for (const [key, value] of Object.entries(data)) {
+                           // Look for all KEYS ending in _id
+                           if (key.match(/_id/gi)) {
+                              // now look for specific _id KEYS
+                              if (key.match(validIds)) {
+                                 ids.push(value);
+                                 console.log('Match: ', key);
+                              } else {
+                                 console.log('No Match: ', key);
+                              }
+                           }
+                        }
+                        console.log('Ids to be resolved: ', ids);
+
+                        axios
+                           .post(
+                              `https://esi.evetech.net/latest/universe/names/`,
+                              ids
+                           )
+                           .then(staticData => {
+                              console.log('ARRAY?: ',staticData.data);
+
+                              // Send results to React
+                              res.json({
+                                 data, 
+                                 data2: staticData.data
+                              });                    
+                           })
+                           .catch(err => {
+                              console.log('api.js ERROR:\n', err.respons);
+                           });
+
+                        // newObj[key] = data
                      } else {
-                        console.log('FALSE');
+                        console.log(endPoint,': No ID exists');
+                        res.json(data);
                      }
-                     // Send results to React
-                     res.json(data);                    
+//////////////////////////////////////////////////////////////!
                   })
                   .catch(err => {
                      console.log(err);
@@ -216,4 +297,39 @@ module.exports = function(app, passport, db) {
          res.redirect('/');
       });
    });
+
+
+   // return an array of objects according to key, value, or key and value matching
+   function getObjects(obj, key, val) {
+      var objects = [];
+      for (var i in obj) {
+         if (!obj.hasOwnProperty(i)) continue;
+         if (typeof obj[i] == 'object') {
+               objects = objects.concat(getObjects(obj[i], key, val));    
+         } else 
+         //if key matches and value matches or if key matches and value is not passed (eliminating the case where key matches but passed value does not)
+         if (i == key && obj[i] == val || i == key && val == '') { //
+               objects.push(obj);
+         } else if (obj[i] == val && key == ''){
+               //only add if the object is not already in the array
+               if (objects.lastIndexOf(obj) == -1){
+                  objects.push(obj);
+               }
+         }
+      }
+      return objects;
+   }
+
+   function getValues(obj, key) {
+      var objects = [];
+      for (var i in obj) {
+         if (!obj.hasOwnProperty(i)) continue;
+         if (typeof obj[i] == 'object') {
+            objects = objects.concat(getValues(obj[i], key));
+         } else if (i == key) {
+            objects.push(obj[i]);
+         }
+      }
+      return objects;
+   }
 };
