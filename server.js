@@ -2,6 +2,7 @@ const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const bodyParser = require('body-parser');
+const path = require('path');
 require('moment');
 require('dotenv').config();
 
@@ -37,6 +38,9 @@ app.use(express.static('public'));
 // Define Routes
 require('./routes/api')(app, passport, db);
 
+app.get('/', function(req, res) {
+   res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 db.sequelize.sync({ force: false }).then(function() {
    app.listen(PORT, function() {
