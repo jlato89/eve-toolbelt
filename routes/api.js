@@ -18,50 +18,6 @@ module.exports = function(app, passport, db) {
       }
    });
 
-   app.get('/api/test', (req, res) => {
-      const rawData = {
-         solar_system_id: 30004733,
-         structure_id: 1026355025332,
-         ship_item_id: 1020527701975,
-         ship_name: 'Big Mamma',
-         ship_type_id: 28352
-      };
-      const ids = [];
-      const validIds = /character_id|corporation_id|alliance_id|station_id|system_id|constellation_id|region_id|type_id/g;
-
-      for (const [key, value] of Object.entries(rawData)) {
-
-         // Look for all KEYS ending in _id
-         if (key.match(/_id/gi)) {
-
-            // now look for specific _id KEYS
-            if (key.match(validIds)) {
-               ids.push(value)
-               console.log('Match: ', key);
-            } else {
-               console.log('No Match: ', key);
-            }
-         }
-      }
-      console.log('Ids to be resolved: ', ids);
-      
-      axios.post(
-         `https://esi.evetech.net/latest/universe/names/`, 
-         ids
-      )
-      .then(data => {
-         console.log('api.js DATA:\n', data.data);
-         // console.log('axios get values: ', getValues(data.data, 'name'));
-
-         console.log(Object.values(data.data));
-
-         res.json(data.data);
-      })
-      .catch(err => {
-         console.log('api.js ERROR:\n', err.response);
-      });
-   });
-
    // Dynamic API data Route
    app.post('/api/data', (req, res) => {
       const dataType = req.body.dataType;
