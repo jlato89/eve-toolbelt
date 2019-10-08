@@ -6,6 +6,7 @@ module.exports = function(app, passport, db) {
    app.get('/api/user', (req, res) => {
       if (!req.user) {
          console.log('SERVER: User not logged in.');
+         res.redirect('/');
       } else {
          const characterID = req.user.CharacterID;
          const characterName = req.user.CharacterName;
