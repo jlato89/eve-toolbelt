@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Axios from 'axios';
 import CharacterPortrait from './CharacterPortrait';
 // import CharacterMailLabels from './CharacterMailLabels';
+import SkillQueue from './SkillQueue';
 import CharacterWallet from './CharacterWallet';
 import CurrentLocation from './CurrentLocation';
 import CurrentShip from './CurrentShip';
@@ -53,9 +54,9 @@ export class Dashboard extends Component {
             <div className='card' style={{ width: '18rem' }}>
                <CharacterPortrait characterID={this.state.characterID} />
                <ul className='list-group list-group-flush'>
-                  {/* <li className='list-group-item'>
-                     <CharacterMailLabels characterID={this.state.characterID} />
-                  </li> */}
+                  <li className='list-group-item'>
+                     <SkillQueue characterID={this.state.characterID} />
+                  </li>
                   <li className='list-group-item'>
                      <CharacterWallet characterID={this.state.characterID} />
                   </li>
