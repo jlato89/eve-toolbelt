@@ -17,18 +17,19 @@ class CurrentLocation extends Component {
             .post('/api/data', {
                dataType: 'characters',
                characterID: props.characterID,
-               endPoint: 'location'
+               endPoint: 'location',
             })
             .then(res => {
                // console.log(res.data);
                return axios.post('/api/data', {
-                  dataType: 'structure',
+                  dataType: 'universe',
                   characterID: props.characterID,
-                  structureId: res.data.structure_id
+                  endPoint: 'structures',
+                  id: res.data.structure_id
                });
             })
             .then(res => {
-               console.log(res.data);
+               // console.log(res.data);
                this.setState({CurrentLocation: res.data});
             })
             .catch(err => console.log(err));
