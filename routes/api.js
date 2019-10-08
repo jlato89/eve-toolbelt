@@ -20,9 +20,9 @@ module.exports = function(app, passport, db) {
    
    //* Dynamic API data Route
    app.post('/api/data', (req, res) => {
-      const dataType = req.body.dataType;             //? Data type requested by React
-      const characterID = req.body.characterID;       //? Character Id sent by React
-      const endPoint = req.body.endPoint;             //? Data endpoint requested by React
+      const dataType = req.body.dataType;          //? Data type requested by React
+      const characterID = req.body.characterID;    //? Character Id sent by React
+      const endPoint = req.body.endPoint;          //? Data endpoint requested by React
       let queryUrl = `https://esi.evetech.net/latest/${dataType}/${characterID}/${endPoint}/`;
       
       // Check if this is a Structure search
