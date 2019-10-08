@@ -13,6 +13,7 @@ class CurrentLocation extends Component {
    UNSAFE_componentWillReceiveProps(props) {
       // Check if characterID exists
       if (props.characterID) {
+         const data = {};
          axios
             .post('/api/data', {
                dataType: 'characters',
@@ -30,7 +31,20 @@ class CurrentLocation extends Component {
             })
             .then(res => {
                // console.log(res.data);
-               this.setState({CurrentLocation: res.data});
+               data.structure_name = res.data.name;
+
+                  return axios.post('/api/data', {
+                  dataType: 'universe',
+                  characterID: props.characterID,
+                  endPoint: 'types',
+                  id: res.data.type_id
+               });
+            })
+            .then(res => {
+               console.log(res.data);
+               data.structure_type = res.data.name;
+
+               this.setState({ CurrentLocation: data });
             })
             .catch(err => console.log(err));
       } else {
@@ -42,7 +56,8 @@ class CurrentLocation extends Component {
       return (
          <>
             <strong>Current Location</strong> -<br />
-            {this.state.CurrentLocation.name}
+            {this.state.CurrentLocation.structure_name}(
+            {this.state.CurrentLocation.structure_type})
          </>
       );
    }
