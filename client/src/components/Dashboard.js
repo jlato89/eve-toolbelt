@@ -25,9 +25,7 @@ export class Dashboard extends Component {
          // console.log('User Not Logged In. Grabbing data');
          Axios('/api/user')
             .then(res => {
-               return res.json();
-            })
-            .then(data => {
+               const data = res.data;
                console.log('DASHBOARD User: ',data);
                localStorage.setItem('characterID', data.characterID);
                localStorage.setItem('characterName', data.characterName);
@@ -35,8 +33,9 @@ export class Dashboard extends Component {
                this.setState({characterName: data.characterName});
             })
             .catch(err => {
+               console.log(err);
                alert('Please Login First!');
-               window.location.href = '/';
+               // window.location.href = '/';
             });
       } else {
          // console.log('User is Logged In');
