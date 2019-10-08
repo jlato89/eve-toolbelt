@@ -41,7 +41,7 @@ class CurrentLocation extends Component {
                });
             })
             .then(res => {
-               console.log(res.data);
+               // console.log(res.data);
                data.structure_type = res.data.name;
 
                this.setState({ CurrentLocation: data });
