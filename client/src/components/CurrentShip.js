@@ -7,7 +7,6 @@ class CurrentShip extends Component {
       this.state = {
          characterID: '',
          CurrentShip: {},
-         staticData: {}
       };
    }
 
@@ -22,11 +21,7 @@ class CurrentShip extends Component {
             })
             .then(res => {
                console.log(res.data);
-
-               this.setState({
-                  CurrentShip: res.data.data,
-                  staticData: res.data.staticDataObj
-               });
+               this.setState({CurrentShip: res.data})
             })
             .catch(err => console.log(err));
       } else {
@@ -38,7 +33,7 @@ class CurrentShip extends Component {
       return (
          <>
             <strong>Current Ship</strong> -<br />
-            {this.state.staticData.inventory_type}(
+            {this.state.CurrentShip.name}(
             {this.state.CurrentShip.ship_name})
          </>
       );
