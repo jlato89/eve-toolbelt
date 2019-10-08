@@ -13,6 +13,7 @@ class CurrentShip extends Component {
    UNSAFE_componentWillReceiveProps(props) {
       // Check if characterID exists
       if (props.characterID) {
+         const data = {};
          axios
             .post('/api/data', {
                dataType: 'characters',
@@ -20,8 +21,20 @@ class CurrentShip extends Component {
                endPoint: 'ship'
             })
             .then(res => {
-               console.log(res.data);
-               this.setState({CurrentShip: res.data})
+               // console.log(res.data);
+               data.ship_name = res.data.ship_name;
+
+               return axios.post('/api/data', {
+                  dataType: 'universe',
+                  characterID: props.characterID,
+                  endPoint: 'types',
+                  id: res.data.ship_type_id
+               });
+            })
+            .then(res => {
+               // console.log(res.data);
+               data.ship_type = res.data.name;
+               this.setState({ CurrentShip: data });
             })
             .catch(err => console.log(err));
       } else {
@@ -33,7 +46,7 @@ class CurrentShip extends Component {
       return (
          <>
             <strong>Current Ship</strong> -<br />
-            {this.state.CurrentShip.name}(
+            {this.state.CurrentShip.ship_type}(
             {this.state.CurrentShip.ship_name})
          </>
       );
