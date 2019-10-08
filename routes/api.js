@@ -122,8 +122,8 @@ module.exports = function(app, passport, db) {
    app.get('/auth/eveonline/callback',
       passport.authenticate('eveonline-sso', {
          session: true,
-         failureRedirect: 'http://localhost:3000/error',
-         successRedirect: 'http://localhost:3000/dashboard'
+         failureRedirect: '/error',
+         successRedirect: '/dashboard'
       })
    );
 
