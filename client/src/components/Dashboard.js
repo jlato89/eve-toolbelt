@@ -35,7 +35,7 @@ export class Dashboard extends Component {
             .catch(err => {
                console.log(err);
                alert('Please Login First!');
-               // window.location.href = '/';
+               window.location.href = '/';
             });
       } else {
          // console.log('User is Logged In');
