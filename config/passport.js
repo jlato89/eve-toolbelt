@@ -5,26 +5,11 @@ module.exports = function(passport, db) {
 
    //* Serialize user
    passport.serializeUser(function(user, done) {
-      // assign userID
-      // done(null, user.CharacterID);
       done(null, user);
    });
 
    //* Deserialize user
    passport.deserializeUser(function(obj, done) {
-      // assign only character id to session
-      // db.user.findOne(
-         //    {
-            //       where: {
-               //          characterID: id
-               //       }
-               //    },
-               //    (err, user) => {
-                  //       console.log(user);
-                  //       done(err, user);
-                  //    }
-                  // );
-
       done(null, obj);
    });
 
@@ -63,15 +48,20 @@ module.exports = function(passport, db) {
                });
 
                //* Add tokens to DB
-               db.token.upsert({
-                  characterID: profile.CharacterID,
-                  accessToken: accessToken,
-                  refreshToken: refreshToken
-               })
-               .then(res => {
-                  if (!res) { console.log('Token Updated'); }
-                  else { console.log('Token Created'); }
-               });
+               db.token
+                  .upsert({
+                     characterID: profile.CharacterID,
+                     accessToken: accessToken,
+                     refreshToken: refreshToken
+                  })
+                  .then(res => {
+                     if (!res) {
+                        console.log('Token Updated');
+                     } else {
+                        console.log('Token Created');
+                     }
+                  })
+                  .catch(err => console.log(err));
                
                return done(null, profile);
             });

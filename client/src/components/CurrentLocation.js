@@ -7,7 +7,6 @@ class CurrentLocation extends Component {
       this.state = {
          characterID: '',
          CurrentLocation: {},
-         staticData: {}
       };
    }
 
@@ -21,11 +20,16 @@ class CurrentLocation extends Component {
                endPoint: 'location'
             })
             .then(res => {
-               console.log(res.data);
-               this.setState({
-                  CurrentLocation: res.data.data,
-                  staticData: res.data.staticDataObj
+               // console.log(res.data);
+               return axios.post('/api/data', {
+                  dataType: 'structure',
+                  characterID: props.characterID,
+                  structureId: res.data.structure_id
                });
+            })
+            .then(res => {
+               console.log(res.data);
+               this.setState({CurrentLocation: res.data});
             })
             .catch(err => console.log(err));
       } else {
@@ -37,7 +41,7 @@ class CurrentLocation extends Component {
       return (
          <>
             <strong>Current Location</strong> -<br />
-            {this.state.CurrentLocation.structure_id}
+            {this.state.CurrentLocation.name}
          </>
       );
    }
