@@ -20,7 +20,7 @@ class CharacterPortrait extends Component {
                endPoint: 'portrait'
             })
             .then(res => {
-               console.log(res.data);
+               // console.log(res.data);
                this.setState({CharacterPortrait: res.data})
             })
             .catch(err => console.log(err));
