@@ -6,7 +6,6 @@ module.exports = function(app, passport, db) {
    app.get('/api/user', (req, res) => {
       if (!req.user) {
          console.log('SERVER: User not logged in.');
-         // res.redirect('/')
       } else {
          const characterID = req.user.CharacterID;
          const characterName = req.user.CharacterName;
@@ -18,35 +17,32 @@ module.exports = function(app, passport, db) {
       }
    });
 
+   
    //* Dynamic API data Route
    app.post('/api/data', (req, res) => {
-      const dataType = req.body.dataType;
-      const characterID = req.body.characterID;
-      const endPoint = req.body.endPoint;
+      const dataType = req.body.dataType;          //? Data type requested by React
+      const characterID = req.body.characterID;    //? Character Id sent by React
+      const endPoint = req.body.endPoint;          //? Data endpoint requested by React
       const queryUrl = `https://esi.evetech.net/latest/${dataType}/${characterID}/${endPoint}/`;
 
       db.token
          .findByPk(characterID)
-         .then(data => {
-            const accessToken = data.dataValues.accessToken;
-            const updatedAt = new Date(data.dataValues.updatedAt);
-            updatedAt.setMinutes(updatedAt.getMinutes() + 20);
-            const tokenExpires = Math.round(
-               new Date(updatedAt).getTime() / 1000
-            );
+         .then(user => {
+            const accessToken = user.dataValues.accessToken;
+            const updatedAt = new Date(user.dataValues.updatedAt);
+               updatedAt.setMinutes(updatedAt.getMinutes() + 20);
+            const tokenExpires = Math.round(new Date(updatedAt).getTime() / 1000);
             const date = Math.round(new Date().getTime() / 1000);
 
             // Check if token needs to be updated before running api call
             if (date > tokenExpires) {
-               console.log('Access Token has expired, Please renew it.');
-               // results.error = 'Token has expired, Please renew it.';
+               console.log('Access Token has expired, Renewing');
 
-               // run token refresh route if token is expired
+               // Refresh Token
                axios.get(`http://localhost:8080/api/token/${characterID}`);
             } else {
-               console.log('Token Valid');
 
-               // Api call data
+               // Actual API call
                axios(queryUrl, {
                   headers: {
                      Authorization: 'Bearer ' + accessToken
@@ -76,7 +72,6 @@ module.exports = function(app, passport, db) {
                         console.log('Ids to be resolved: ', ids);
                         console.log('***********************************');
 
-
                         axios
                            .post(
                               `https://esi.evetech.net/latest/universe/names/`,
@@ -99,7 +94,7 @@ module.exports = function(app, passport, db) {
                               });                    
                            })
                            .catch(err => {
-                              console.log('api.js ERROR:\n', err.repsonse, '\n', err.response.data);
+                              console.log('Axios StaticData ERROR:\n', err.response);
                               // throw err
                            });
 
@@ -109,12 +104,12 @@ module.exports = function(app, passport, db) {
                      }
                   })
                   .catch(err => {
-                     console.log(err);
+                     console.log('Axios Data ERROR:\n', err.response);
                   });
             }
          })
          .catch(err => {
-            throw err;
+            console.log('DB FindByPK ERROR:\n', err.response);
          });
    })
 
@@ -123,8 +118,8 @@ module.exports = function(app, passport, db) {
       const characterID = req.params.id;
 
       db.token.findByPk(characterID)
-         .then(data => {
-            const refreshToken = data.refreshToken;
+         .then(user => {
+            const refreshToken = user.refreshToken;
             const rawAuth =
                process.env.EVEONLINE_CLIENT_ID +
                ':' +
@@ -145,8 +140,10 @@ module.exports = function(app, passport, db) {
                   refresh_token: refreshToken
                }
             };
-            request(options, function(error, response, body) {
-               if (error) throw new Error(error);
+            request(options, function(err, response, body) {
+               if (error) {
+                  console.log('Token Request ERROR:\n', err.response);
+               }
                const data = JSON.parse(body); // Convert body to JSON
                db.token
                   .update(
@@ -162,31 +159,27 @@ module.exports = function(app, passport, db) {
                   )
                   .then(res => {
                      console.log('DB Records Updated: ', res);
+                     res.json({ msg: 'Token updated!' });
                   })
                   .catch(err => {
-                     throw err;
+                     console.log('Token DB Update ERROR:\n', err.response);
+                     res.json({ msg: 'Token Failed to update!' });
                   });
             });
          });
-      res.json({ msg: 'Token updated, Maybe, check logs' });
    });
+
 
    //*  EVE Online Login proccess
    app.get('/auth/eveonline', passport.authenticate('eveonline-sso'));
 
    //* EVE Online Callback
-   app.get(
-      '/auth/eveonline/callback',
+   app.get('/auth/eveonline/callback',
       passport.authenticate('eveonline-sso', {
          session: true,
-         failureRedirect: 'http://localhost:3000/error'
-      }),
-      function(req, res) {
-         console.log('~~~ Made it to callback ~~~');
-         // console.log('profile: \n', req.user._json);
-
-         res.redirect('http://localhost:3000/dashboard');
-      }
+         failureRedirect: 'http://localhost:3000/error',
+         successRedirect: 'http://localhost:3000/dashboard'
+      })
    );
 
    //* Logout
@@ -195,39 +188,4 @@ module.exports = function(app, passport, db) {
          res.redirect('/');
       });
    });
-
-
-   // return an array of objects according to key, value, or key and value matching
-   function getObjects(obj, key, val) {
-      var objects = [];
-      for (var i in obj) {
-         if (!obj.hasOwnProperty(i)) continue;
-         if (typeof obj[i] == 'object') {
-               objects = objects.concat(getObjects(obj[i], key, val));    
-         } else 
-         //if key matches and value matches or if key matches and value is not passed (eliminating the case where key matches but passed value does not)
-         if (i == key && obj[i] == val || i == key && val == '') { //
-               objects.push(obj);
-         } else if (obj[i] == val && key == ''){
-               //only add if the object is not already in the array
-               if (objects.lastIndexOf(obj) == -1){
-                  objects.push(obj);
-               }
-         }
-      }
-      return objects;
-   }
-
-   function getValues(obj, key) {
-      var objects = [];
-      for (var i in obj) {
-         if (!obj.hasOwnProperty(i)) continue;
-         if (typeof obj[i] == 'object') {
-            objects = objects.concat(getValues(obj[i], key));
-         } else if (i == key) {
-            objects.push(obj[i]);
-         }
-      }
-      return objects;
-   }
 };
