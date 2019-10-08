@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import NumberFormat from 'react-number-format';
 
-class CurrentShip extends Component {
+class Wallet extends Component {
    constructor() {
       super();
       this.state = {
          characterID: '',
-         CurrentShip: {},
-         staticData: {}
+         WalletIsk: ''
       };
    }
 
@@ -18,15 +18,11 @@ class CurrentShip extends Component {
             .post('/api/data', {
                dataType: 'characters',
                characterID: props.characterID,
-               endPoint: 'ship'
+               endPoint: 'wallet'
             })
             .then(res => {
                console.log(res.data);
-
-               this.setState({
-                  CurrentShip: res.data.data,
-                  staticData: res.data.staticDataObj
-               });
+               this.setState({WalletIsk: res.data})
             })
             .catch(err => console.log(err));
       } else {
@@ -37,12 +33,16 @@ class CurrentShip extends Component {
    render() {
       return (
          <>
-            <strong>Current Ship</strong> -<br />
-            {this.state.staticData.inventory_type}(
-            {this.state.CurrentShip.ship_name})
+            <strong>Wallet Balance</strong> -<br />
+            <NumberFormat
+               value={this.state.WalletIsk}
+               displayType={'text'}
+               thousandSeparator={true}
+               prefix={'$'}
+            />
          </>
       );
    }
 }
 
-export default CurrentShip;
+export default Wallet;

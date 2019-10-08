@@ -6,7 +6,8 @@ class CharacterMailLabels extends Component {
       super();
       this.state = {
          characterID: '',
-         CharacterMailLabels: {}
+         CharacterMailLabels: {},
+         StaticData: {}
       };
    }
 
@@ -21,7 +22,10 @@ class CharacterMailLabels extends Component {
             })
             .then(res => {
                console.log(res.data);
-               this.setState({CharacterMailLabels: res.data})
+               this.setState({
+                  CharacterMailLabels: res.data,
+                  staticData: res.data.staticDataObj
+               });
             })
             .catch(err => console.log(err));
       } else {
@@ -31,11 +35,10 @@ class CharacterMailLabels extends Component {
 
    render() {
       return (
-         <div>
-            <p>
-               Unread Mail - {this.state.CharacterMailLabels.total_unread_count}
-            </p>
-         </div>
+         <>
+            <strong>Unread Mail</strong> -<br />
+            {this.state.CharacterMailLabels.total_unread_count}
+         </>
       );
    }
 }

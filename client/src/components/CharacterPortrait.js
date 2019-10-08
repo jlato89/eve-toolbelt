@@ -31,11 +31,13 @@ class CharacterPortrait extends Component {
 
    render() {
       return (
-         <div>
-            <p>
-               <img src={this.state.CharacterPortrait.px128x128} alt='Character Portrait'></img>
-            </p>
-         </div>
+         <>
+            <img
+               src={this.state.CharacterPortrait.px256x256}
+               className='card-img-top'
+               alt='Character Portrait'
+            ></img>
+         </>
       );
    }
 }

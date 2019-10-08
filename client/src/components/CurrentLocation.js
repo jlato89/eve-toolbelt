@@ -35,12 +35,10 @@ class CurrentLocation extends Component {
 
    render() {
       return (
-         <div>
-            <p>
-               Current Location - {this.state.CurrentLocation.structure_id} -{' '}
-               {this.state.staticData.solar_system}
-            </p>
-         </div>
+         <>
+            <strong>Current Location</strong> -<br />
+            {this.state.CurrentLocation.structure_id}
+         </>
       );
    }
 }

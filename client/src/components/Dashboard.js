@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import Axios from 'axios';
-import Wallet from './Wallet';
-import CurrentShip from './CurrentShip';
-import CurrentLocation from './CurrentLocation';
-import CharacterMailLabels from './CharacterMailLabels';
 import CharacterPortrait from './CharacterPortrait';
+// import CharacterMailLabels from './CharacterMailLabels';
+import CharacterWallet from './CharacterWallet';
+import CurrentLocation from './CurrentLocation';
+import CurrentShip from './CurrentShip';
 
 export class Dashboard extends Component {
    constructor() {
@@ -43,26 +43,38 @@ export class Dashboard extends Component {
          this.setState({characterID: characterID});
          this.setState({characterName: characterName});
       }
-
-      //* Get API Data
-      // Axios(`/api/eve/${characterID}`)
-      //    .then(res => {
-      //       console.log('API Data:\n',res.data);
-      //       this.setState({apiData: res.data});
-      //    })
-
    }
 
    render() { 
       return (
          <>
             <h1>Dashboard Page</h1>
-            <h2>Welcome {this.state.characterName}<sup>({this.state.characterID})</sup>!</h2>
-            <CharacterPortrait characterID={this.state.characterID} />
+            <h2>
+               Welcome {this.state.characterName}<sup>({this.state.characterID})</sup>!
+            </h2>
+            {/* <CharacterPortrait characterID={this.state.characterID} /> */}
             {/* <CharacterMailLabels characterID={this.state.characterID} /> */}
-            <Wallet characterID={this.state.characterID} />
-            <CurrentLocation characterID={this.state.characterID} />
-            <CurrentShip characterID={this.state.characterID} />
+            {/* <Wallet characterID={this.state.characterID} /> */}
+            {/* <CurrentLocation characterID={this.state.characterID} /> */}
+            {/* <CurrentShip characterID={this.state.characterID} /> */}
+
+            <div className='card' style={{ width: '18rem' }}>
+               <CharacterPortrait characterID={this.state.characterID} />
+               <ul className='list-group list-group-flush'>
+                  {/* <li className='list-group-item'>
+                     <CharacterMailLabels characterID={this.state.characterID} />
+                  </li> */}
+                  <li className='list-group-item'>
+                     <CharacterWallet characterID={this.state.characterID} />
+                  </li>
+                  <li className='list-group-item'>
+                     <CurrentLocation characterID={this.state.characterID} />
+                  </li>
+                  <li className='list-group-item'>
+                     <CurrentShip characterID={this.state.characterID} />
+                  </li>
+               </ul>
+            </div>
          </>
       );
    }
