@@ -47,16 +47,9 @@ export class Dashboard extends Component {
    render() { 
       return (
          <>
-            <h1>Dashboard Page</h1>
             <h2>
-               Welcome {this.state.characterName}<sup>({this.state.characterID})</sup>!
+               Welcome to your Dashboard, {this.state.characterName}!
             </h2>
-            {/* <CharacterPortrait characterID={this.state.characterID} /> */}
-            {/* <CharacterMailLabels characterID={this.state.characterID} /> */}
-            {/* <Wallet characterID={this.state.characterID} /> */}
-            {/* <CurrentLocation characterID={this.state.characterID} /> */}
-            {/* <CurrentShip characterID={this.state.characterID} /> */}
-
             <div className='card' style={{ width: '18rem' }}>
                <CharacterPortrait characterID={this.state.characterID} />
                <ul className='list-group list-group-flush'>
