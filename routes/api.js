@@ -20,11 +20,16 @@ module.exports = function(app, passport, db) {
    
    //* Dynamic API data Route
    app.post('/api/data', (req, res) => {
-      const dataType = req.body.dataType;          //? Data type requested by React
-      const characterID = req.body.characterID;    //? Character Id sent by React
-      const endPoint = req.body.endPoint;          //? Data endpoint requested by React
-      const queryUrl = `https://esi.evetech.net/latest/${dataType}/${characterID}/${endPoint}/`;
-
+      const dataType = req.body.dataType;             //? Data type requested by React
+      const characterID = req.body.characterID;       //? Character Id sent by React
+      const endPoint = req.body.endPoint;             //? Data endpoint requested by React
+      let queryUrl = `https://esi.evetech.net/latest/${dataType}/${characterID}/${endPoint}/`;
+      
+      // Check if this is a Structure search
+      if (dataType == 'structure') {
+         const structureId = req.body.structureId;    //? Structure Id sent by React
+         queryUrl = `https://esi.evetech.net/latest/universe/structures/${structureId}/`;
+      }
       db.token
          .findByPk(characterID)
          .then(user => {
@@ -51,11 +56,12 @@ module.exports = function(app, passport, db) {
                   .then(result => {
                      let data = result.data;
                      const idCheck = JSON.stringify(data).includes('_id');
-
+                     const newData = {};
+                     // newData = data;
                      // Check if any IDs exist in data. 
                      // If so resolve IDs to names using Axios
-                     if (idCheck) {
-                        console.log('******** ', endPoint, ' endPoint ********');
+                     if (idCheck && dataType != 'structure') {
+                        // console.log('******** ', endPoint, ' endPoint ********');
                         const validIds = /character_id|corporation_id|alliance_id|station_id|system_id|constellation_id|region_id|type_id/g;
                         const ids = [];
 
@@ -65,13 +71,11 @@ module.exports = function(app, passport, db) {
                               // now look for specific _id KEYS
                               if (key.match(validIds)) {
                                  ids.push(value);
-                                 console.log('Match: ', key);
+                                 // console.log('Match: ', key);
                               }
                            }
                         }
-                        console.log('Ids to be resolved: ', ids);
-                        console.log('***********************************');
-
+                        // console.log('Ids to be resolved: ', ids);
                         axios
                            .post(
                               `https://esi.evetech.net/latest/universe/names/`,
@@ -81,36 +85,26 @@ module.exports = function(app, passport, db) {
                               const array = staticData.data;
                               const arrayToObject = array =>
                                  array.reduce((obj, item) => {
-                                    obj[item.category] = item.name;
+                                    obj = item.name;
                                     return obj;
                                  }, {});
                               const staticDataObj = arrayToObject(array);
-                              console.log('arrayToObj Result:\n', staticDataObj);
+                              // console.log('arrayToObj Result:\n', staticDataObj);
 
-                              // Send results to React
-                              res.json({
-                                 data,
-                                 staticDataObj
-                              });                    
+                              // Send results to data object
+                              data.name = staticDataObj;
+                              // console.log(data);
+                              res.json(data);
                            })
-                           .catch(err => {
-                              console.log('Axios StaticData ERROR:\n', err.response);
-                              // throw err
-                           });
-
-                        // newObj[key] = data
+                           .catch(err => console.log('Axios StaticData ERROR:\n', err.response));
                      } else {
                         res.json(data);
                      }
                   })
-                  .catch(err => {
-                     console.log('Axios Data ERROR:\n', err.response);
-                  });
+                  .catch(err => console.log('Axios Data ERROR:\n', err));
             }
          })
-         .catch(err => {
-            console.log('DB FindByPK ERROR:\n', err.response);
-         });
+         .catch(err => console.log('DB FindByPK ERROR:\n', err));
    })
 
    //* Refresh Tokens from EVE AUTH
@@ -141,8 +135,8 @@ module.exports = function(app, passport, db) {
                }
             };
             request(options, function(err, response, body) {
-               if (error) {
-                  console.log('Token Request ERROR:\n', err.response);
+               if (err) {
+                  console.log('Token Request ERROR:\n', err);
                }
                const data = JSON.parse(body); // Convert body to JSON
                db.token
@@ -157,14 +151,8 @@ module.exports = function(app, passport, db) {
                         }
                      }
                   )
-                  .then(res => {
-                     console.log('DB Records Updated: ', res);
-                     res.json({ msg: 'Token updated!' });
-                  })
-                  .catch(err => {
-                     console.log('Token DB Update ERROR:\n', err.response);
-                     res.json({ msg: 'Token Failed to update!' });
-                  });
+                  .then(res => console.log('DB Records Updated: ', res))
+                  .catch(err => console.log('Token DB Update ERROR:\n', err));
             });
          });
    });
