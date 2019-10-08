@@ -18,7 +18,7 @@ module.exports = function(app, passport, db) {
       }
    });
 
-   // Dynamic API data Route
+   //* Dynamic API data Route
    app.post('/api/data', (req, res) => {
       const dataType = req.body.dataType;
       const characterID = req.body.characterID;
@@ -117,69 +117,6 @@ module.exports = function(app, passport, db) {
             throw err;
          });
    })
-
-   //* EVE Online Api Data Call
-   app.get('/api/eve/:id', (req, res) => {
-      const characterID = req.params.id;
-      const url = 'https://esi.evetech.net/latest';
-      const requests = {
-         characterIsk: `/characters/${characterID}/wallet/`,
-         characterLocation: `/characters/${characterID}/location/`,
-         characterActiveShip: `/characters/${characterID}/ship/`,
-         characterUnreadMailCount: `/characters/${characterID}/mail/labels/`,
-         characterSkillQueue: `/characters/${characterID}/skillqueue/`
-      };
-      let results = {};
-
-      // Grab token info
-      db.token
-         .findByPk(characterID)
-         .then(data => {
-            const accessToken = data.dataValues.accessToken;
-            const updatedAt = new Date(data.dataValues.updatedAt);
-               updatedAt.setMinutes(updatedAt.getMinutes() + 20);
-            const tokenExpires = Math.round(
-               new Date(updatedAt).getTime() / 1000
-            );
-            const date = Math.round(new Date().getTime() / 1000);
-
-            // Check if token needs to be updated before running api call
-            if (date > tokenExpires) {
-               console.log('Access Token has expired, Please renew it.');
-               results.error = 'Token has expired, Please renew it.';
-
-               // run token refresh route if token is expired
-               axios.get(`http://localhost:8080/api/token/${characterID}`);
-            } else {
-               console.log('Token Valid');
-
-               // Start looping through axios calls
-               for (const [key, value] of Object.entries(requests)) {
-                  const queryUrl = url + value;
-
-                  // Api call data
-                  axios(queryUrl, {
-                     headers: {
-                        Authorization: 'Bearer ' + accessToken
-                     }
-                  })
-                  .then(result => {
-                     // Result of api call sent to results array
-                     results[key] = result.data;
-                  })
-                  .catch(err => {
-                     console.log(
-                        `API Error: \nStatus ${err.response.status} \n ${err.response.data.error}`
-                     );
-                  });
-               }
-            }
-            setTimeout(function() {res.json(results);}, 2000); //! Testing purposes ONLY
-         })
-         .catch(err => {
-            throw err;
-         });
-   });
 
    //* Refresh Tokens from EVE AUTH
    app.get('/api/token/:id', (req, res) => {
