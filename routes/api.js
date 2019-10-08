@@ -26,7 +26,7 @@ module.exports = function(app, passport, db) {
       const endPoint = req.body.endPoint;          //? Data endpoint requested by React
       let queryUrl = `https://esi.evetech.net/latest/${dataType}/${characterID}/${endPoint}/`;
       
-      // Check if this is a Structure search
+      // Check if this is a universe search
       if (dataType == 'universe') {
          const id = req.body.id;    //? Id sent by React
          queryUrl = `https://esi.evetech.net/latest/${dataType}/${endPoint}/${id}/`;
@@ -56,52 +56,6 @@ module.exports = function(app, passport, db) {
                })
                   .then(result => {
                      let data = result.data;
-                     const idCheck = JSON.stringify(data).includes('_id');
-                     const newData = {};
-                     // newData = data;
-                     // Check if any IDs exist in data. 
-                     // If so resolve IDs to names using Axios
-                     // if (idCheck && dataType != 'structure') {
-                     //    // console.log('******** ', endPoint, ' endPoint ********');
-                     //    const validIds = /character_id|corporation_id|alliance_id|station_id|system_id|constellation_id|region_id|type_id/g;
-                     //    const ids = [];
-
-                     //    for (const [key, value] of Object.entries(data)) {
-                     //       // Look for all KEYS ending in _id
-                     //       if (key.match(/_id/gi)) {
-                     //          // now look for specific _id KEYS
-                     //          if (key.match(validIds)) {
-                     //             ids.push(value);
-                     //             // console.log('Match: ', key);
-                     //          }
-                     //       }
-                     //    }
-                     //    // console.log('Ids to be resolved: ', ids);
-                     //    axios
-                     //       .post(
-                     //          `https://esi.evetech.net/latest/universe/names/`,
-                     //          ids
-                     //       )
-                     //       .then(staticData => {
-                     //          const array = staticData.data;
-                     //          const arrayToObject = array =>
-                     //             array.reduce((obj, item) => {
-                     //                obj = item.name;
-                     //                return obj;
-                     //             }, {});
-                     //          const staticDataObj = arrayToObject(array);
-                     //          // console.log('arrayToObj Result:\n', staticDataObj);
-
-                     //          // Send results to data object
-                     //          data.name = staticDataObj;
-                     //          // console.log(data);
-                     //          res.json(data);
-                     //       })
-                     //       .catch(err => console.log('Axios StaticData ERROR:\n', err.response));
-                     //       res.json(data);
-                     // } else {
-                     //    res.json(data);
-                     // }
                      res.json(data);
                   })
                   .catch(err => console.log('Axios Data ERROR:\n', err));
