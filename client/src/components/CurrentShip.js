@@ -6,7 +6,7 @@ class CurrentShip extends Component {
       super();
       this.state = {
          characterID: '',
-         CurrentShip: {},
+         CurrentShip: {}
       };
    }
 
