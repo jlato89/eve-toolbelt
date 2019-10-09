@@ -11,9 +11,9 @@ export class Dashboard extends Component {
    constructor() {
       super();
       this.state = {
+         dataReady: false,
          characterID: '',
-         characterName: '',
-         apiData: {}
+         characterName: ''
       }
    }
 
@@ -46,30 +46,38 @@ export class Dashboard extends Component {
    }
 
    render() { 
-      return (
-         <>
-            <h2>
-               Welcome to your Dashboard, {this.state.characterName}!
-            </h2>
-            <div className='card' style={{ width: '18rem' }}>
-               <CharacterPortrait characterID={this.state.characterID} />
-               <ul className='list-group list-group-flush'>
-                  <li className='list-group-item'>
-                     <SkillQueue characterID={this.state.characterID} />
-                  </li>
-                  <li className='list-group-item'>
-                     <CharacterWallet characterID={this.state.characterID} />
-                  </li>
-                  <li className='list-group-item'>
-                     <CurrentLocation characterID={this.state.characterID} />
-                  </li>
-                  <li className='list-group-item'>
-                     <CurrentShip characterID={this.state.characterID} />
-                  </li>
-               </ul>
-            </div>
-         </>
-      );
+      if (!this.state.dataReady) {
+         return (
+            <>
+               <h2>
+                  Welcome to your Dashboard, {this.state.characterName}!
+               </h2>
+               <div className='card' style={{ width: '18rem' }}>
+                  <CharacterPortrait characterID={this.state.characterID} />
+                  <ul className='list-group list-group-flush'>
+                     <li className='list-group-item'>
+                        <SkillQueue characterID={this.state.characterID} />
+                     </li>
+                     <li className='list-group-item'>
+                        <CharacterWallet characterID={this.state.characterID} />
+                     </li>
+                     <li className='list-group-item'>
+                        <CurrentLocation characterID={this.state.characterID} />
+                     </li>
+                     <li className='list-group-item'>
+                        <CurrentShip characterID={this.state.characterID} />
+                     </li>
+                  </ul>
+               </div>
+            </>
+         );
+      } else {
+         return (
+            <>
+            Loading...
+            </>
+         )
+      }
    }
 }
 
