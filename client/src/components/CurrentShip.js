@@ -46,8 +46,8 @@ class CurrentShip extends Component {
       return (
          <>
             <strong>Current Ship</strong> -<br />
-            {this.state.CurrentShip.ship_type}(
-            {this.state.CurrentShip.ship_name})
+            {this.state.CurrentShip.ship_name}(
+            {this.state.CurrentShip.ship_type})
          </>
       );
    }
