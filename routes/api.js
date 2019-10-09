@@ -65,20 +65,18 @@ module.exports = function(app, passport, db) {
                         options
                      )
                   ])
-                  .then(
-                     axios.spread(
-                        (skillqueue, portrait, wallet, location, ship) => {
-                           const data ={
-                              skillqueue: skillqueue.data,
-                              portrait: portrait.data,
-                              wallet: wallet.data,
-                              location: location.data,
-                              ship: ship.data
-                           }
-                           res.json(data);
+                  .then(axios.spread(
+                     (skillqueue, portrait, wallet, location, ship) => {
+                        const data ={
+                           skillqueue: skillqueue.data,
+                           portrait: portrait.data,
+                           wallet: wallet.data,
+                           location: location.data,
+                           ship: ship.data
                         }
-                     )
-                  )
+                        res.json(data);
+                     }
+                  ))
                   .catch(err => console.log(err));
             }
          });
