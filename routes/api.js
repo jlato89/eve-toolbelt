@@ -18,6 +18,72 @@ module.exports = function(app, passport, db) {
       }
    });
 
+   //* Test Group API
+   app.get('/api/test', (req, res) => {
+      db.token
+         .findByPk(95271542)
+         .then(user => {
+            const accessToken = user.dataValues.accessToken;
+            const updatedAt = new Date(user.dataValues.updatedAt);
+               updatedAt.setMinutes(updatedAt.getMinutes() + 20);
+            const tokenExpires = Math.round(new Date(updatedAt).getTime() / 1000);
+            const date = Math.round(new Date().getTime() / 1000);
+
+            // Check if token needs to be updated before running api call
+            if (date > tokenExpires) {
+               console.log('Access Token has expired, Renewing');
+
+               // Refresh Token
+               axios.get(`http://localhost:8080/api/token/95271542`);
+            } else {
+               const options = {
+                  headers: {
+                     Authorization: 'Bearer ' + accessToken
+                  }
+               };
+
+               axios
+                  .all([
+                     axios.get(
+                        'https://esi.evetech.net/latest/characters/95271542/skillqueue',
+                        options
+                     ),
+                     axios.get(
+                        'https://esi.evetech.net/latest/characters/95271542/portrait',
+                        options
+                     ),
+                     axios.get(
+                        'https://esi.evetech.net/latest/characters/95271542/wallet',
+                        options
+                     ),
+                     axios.get(
+                        'https://esi.evetech.net/latest/characters/95271542/location',
+                        options
+                     ),
+                     axios.get(
+                        'https://esi.evetech.net/latest/characters/95271542/ship',
+                        options
+                     )
+                  ])
+                  .then(
+                     axios.spread(
+                        (skillqueue, portrait, wallet, location, ship) => {
+                           const data ={
+                              skillqueue: skillqueue.data,
+                              portrait: portrait.data,
+                              wallet: wallet.data,
+                              location: location.data,
+                              ship: ship.data
+                           }
+                           res.json(data);
+                        }
+                     )
+                  )
+                  .catch(err => console.log(err));
+            }
+         });
+   });
+
    
    //* Dynamic API data Route
    app.post('/api/data', (req, res) => {
@@ -56,6 +122,7 @@ module.exports = function(app, passport, db) {
                })
                   .then(result => {
                      let data = result.data;
+                     console.log(result.config.url);
                      res.json(data);
                   })
                   .catch(err => console.log('Axios Data ERROR:\n', err));
