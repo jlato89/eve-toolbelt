@@ -21,8 +21,9 @@ class CurrentShip extends Component {
                endPoint: 'ship'
             })
             .then(res => {
-               // console.log(res.data);
+               console.log(res.data);
                data.ship_name = res.data.ship_name;
+               data.ship_id = res.data.ship_type_id;
 
                return axios.post('/api/data', {
                   dataType: 'universe',
@@ -47,7 +48,11 @@ class CurrentShip extends Component {
          <>
             <strong>Current Ship</strong> -<br />
             {this.state.CurrentShip.ship_name}(
-            {this.state.CurrentShip.ship_type})
+            {this.state.CurrentShip.ship_type}) <br />
+            <img
+               src={`https://image.eveonline.com/Render/${this.state.CurrentShip.ship_id}_256.png`}
+               alt='Current Ship'
+            />
          </>
       );
    }
